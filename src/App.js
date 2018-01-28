@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import * as CSVParser from 'papaparse';
-import { get, uniq } from 'lodash';
 import * as R from 'ramda';
-
 
 // file uploader
 import Dropzone from 'react-dropzone';
@@ -14,7 +12,7 @@ var data = [
     Timestamp: '1/28/2018 10:58:57',
     'Your Name': 'Omid',
     meal:
-      '[SenChay] SC02 Vermicelli salad (vermicelli, Chinese cabbage, carrot, cucumber, tofu, sesame, soy wasabi sauce)',
+      ' [SenChay SC02 Vermicelli salad (vermicelli, Chinese cabbage, carrot, cucumber, tofu, sesame, soy wasabi sauce)',
   },
   {
     'Email Address': 'rosa.parks@blah.com',
@@ -35,57 +33,32 @@ var data = [
  * outputs the same array, by extracting and putting the restaurant name as a property
  */
 const extractRestaurantNames = surveyData => {
-    const restaurantNamePattern = /^\[.+\]/;
+  const restaurantNamePattern = /^\[.+\]/;
 
-  R.test(restaurantNamePattern, 'bananas');
-
-  return surveyData.map((order) => {
-
+  return surveyData.map(order => {
     return {
       meal: order.meal,
-      restaurant: R.match(restaurantNamePattern, order.meal)[0] || '[UnknownRestaurant]',
-      email: order["Email Address"],
-      requestedBy: ["Your Name"]
-    }
-  })
+      restaurant: R.toLower(
+        R.match(restaurantNamePattern, R.trim(order.meal))[0] ||
+          '[unknown_restaurant]',
+      ),
+      email: order['Email Address'],
+      requestedBy: order['Your Name'],
+    };
+  });
+};
+
+const groupByRestaurants = data => {
+  const byRestaurant = R.groupBy(order => order.restaurant)
+  return byRestaurant(data)
+};
+
+const reduceMeals = data => {
 
 }
 
 
-console.log('extract: ', extractRestaurantNames(data));
-const ordersByRestaurants = surveyData => {
-  const restaurants = uniq(
-    surveyData.map(order => {
-      const restaurantNamePattern = /^\[.+\]/;
-
-      const found =
-        restaurantNamePattern.test(order.meal) &&
-        order.meal
-          .match(restaurantNamePattern)[0]
-          .replace('[', '')
-          .replace(']', '')
-          .toLowerCase();
-
-      if (found) return found;
-    }),
-  );
-
-  console.log('restaurants', uniq(restaurants));
-
-  let orders = restaurants.map(restaurantName => {
-    return surveyData.filter(order =>
-      order.meal.toLowerCase().includes(restaurantName),
-    );
-  });
-
-  console.log('orders', orders);
-
-  //orders.reduce()
-
-
-};
-
-ordersByRestaurants(data);
+console.log('group by restaurant ', groupByRestaurants(extractRestaurantNames(data)));
 
 class App extends Component {
   constructor() {
