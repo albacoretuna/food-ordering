@@ -1,23 +1,26 @@
-FROM alpine:3.7
+FROM node:9.4
 MAINTAINER Omid Hezaveh <Omid.Hezaveh@futurice.com>
 
-# compiler and libs required to install pypi packages
-RUN apk --no-cache add nodejs
 
-# set up work area
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+# Create app directory
+RUN mkdir -p /src/app
+WORKDIR /src/app
 
+# to make npm test run only once non-interactively
+ENV CI=true
 
-# deps install step: change infrequently, satisfied from cache
-COPY package.json /usr/src/app/
-RUN npm install && npm run build && npm install -g serve
+# Install app dependencies
+COPY package.json /src/app/
+RUN npm install && \
+    npm install -g pushstate-server
 
-# deploy and build app code
-COPY . /usr/src/app/
+# Bundle app source
+COPY . /src/app
 
-# expose port
+# Build and optimize react app
+RUN npm run build
+
 EXPOSE 8000
 
-# set up runtime
-CMD ["serve", "--single", "build", "--port", "8000"]
+# defined in package.json
+CMD [ "npm", "run", "start:prod" ]

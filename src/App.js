@@ -115,7 +115,9 @@ class App extends Component {
               margin: '10px auto',
             }}
           >
-            <p>Drop the orders .csv file here, or click to open a file browser</p>
+            <p>
+              Drop the orders .csv file here, or click to open a file browser
+            </p>
           </Dropzone>
           <div className="mailer">
             <Mailer meals={this.state.groupByRestaurants} />
@@ -131,13 +133,12 @@ class App extends Component {
 
 const RestaurantOrders = ({ orders }) =>
   <div>
-
-    {!orders && <p>Orders and buttons will appear down here after uploading the file</p>
-    }
+    {!orders &&
+      <p>Orders and buttons will appear down here after uploading the file</p>}
     {orders &&
       Object.keys(orders).map((restaurant, i) =>
         <div key={i}>
-          {restaurant.replace('[', '').replace(']', '')}
+          {restaurant}
           <ul>
             {Object.keys(orders[restaurant]).map((food, i) =>
               <li key={i}>
@@ -154,37 +155,45 @@ const mailToLink = ({ meals, restaurant }) =>
     meal => meal.email,
   )[0]}?subject=${restaurant} arrived, your food is here&cc=${meals[
     restaurant
-  ].shift() && meals[restaurant].map(meal => meal.email).join(',')}&body=Hello my futurice colleague, \n Please find your selected futufriday food at the kitchen. \n Warm regards, FutuFriday Team`;
+  ].shift() &&
+    meals[restaurant]
+      .map(meal => meal.email)
+      .join(
+        ',',
+      )}&body=Hello my futurice colleague, \n Please find your selected futufriday food at the kitchen. \n Warm regards, FutuFriday Team`;
 
 const Mailer = ({ meals }) =>
-  <div>
+  <div className="mailer__div">
     {meals &&
-      Object.keys(meals).map(
-        (restaurant, i) =>
-          console.log(restaurant) ||
-          <div key={i}>
-            <a
-              href={encodeURI(mailToLink({ meals, restaurant }))}
-              className="mail-link"
-            >
-              <b className="restaurant-name">
-                {restaurant.replace('[', '').replace(']', '')}
-              </b>{' '}
-              Arrived! Send email
-            </a>
-          </div>,
+      <p>
+        Press each button to send an email to the ones who ordered from that
+        restaurant
+      </p>}
+    {meals &&
+      Object.keys(meals).map((restaurant, i) =>
+        <div key={i}>
+          <a
+            href={encodeURI(mailToLink({ meals, restaurant }))}
+            className="mail-link"
+          >
+            <b className="restaurant-name">
+              {restaurant}
+            </b>{' '}
+            Arrived! Send email
+          </a>
+        </div>,
       )}
-          <div >
-            <a
-              href={encodeURI("mailto:helsinki@futurice.com?subject=Extra food is here&body=If you haven't ordered food, you need to know that extra food has arrived! Warm regards, FutuFriday team")}
-              className="mail-link"
-            >
-              <b className="restaurant-name">
-                Extra Food
-              </b>{' '}
-              Arrived! Send email
-            </a>
-          </div>,
+    {meals &&
+      <div>
+        <a
+          href={encodeURI(
+            "mailto:helsinki@futurice.com?subject=Extra food is here&body=If you haven't ordered food, you need to know that extra food has arrived! Warm regards, FutuFriday team",
+          )}
+          className="mail-link"
+        >
+          <b className="restaurant-name">Extra Food</b> Arrived! Send email
+        </a>
+      </div>}
   </div>;
 
 export default App;
