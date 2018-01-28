@@ -6,28 +6,6 @@ import * as R from 'ramda';
 import Dropzone from 'react-dropzone';
 import './App.css';
 
-var data = [
-  {
-    'Email Address': 'grace.hopper@nasa.com',
-    Timestamp: '1/28/2018 10:58:57',
-    'Your Name': 'Omid',
-    meal:
-      ' [SenChay] SC02 Vermicelli salad (vermicelli, Chinese cabbage, carrot, cucumber, tofu, sesame, soy wasabi sauce)',
-  },
-  {
-    'Email Address': 'rosa.parks@blah.com',
-    Timestamp: '1/28/2018 11:58:57',
-    'Your Name': 'Ali',
-    meal: '[Fafa] Halumi ',
-  },
-  {
-    'Email Address': 'blah@blah.com',
-    Timestamp: '1/28/2018 11:58:57',
-    'Your Name': 'Ali',
-    meal: '[Fafa] Halumi ',
-  },
-];
-
 /*
  * input array of objects, containing orders
  * outputs the same array, by extracting and putting the restaurant name as a property
@@ -36,7 +14,7 @@ const extractRestaurantNames = surveyData => {
   const restaurantNamePattern = /^\[.+\]/;
 
   return surveyData.map(order => {
-    if (!order.meal) return;
+    if (!order.meal) return '';
     return {
       meal: R.trim(order.meal || ''),
       restaurant: R.toLower(
@@ -69,11 +47,6 @@ const groupByMeals = data => {
 
   return R.map(countMeals, data);
 };
-
-console.log(
-  'group by meals',
-  groupByMeals(groupByRestaurants(extractRestaurantNames(data))),
-);
 
 class App extends Component {
   constructor() {
@@ -110,7 +83,7 @@ class App extends Component {
 
   parseComplete = results => {
     const orders =
-      results['data'] && results['data'].filter(order => !R.isEmpty(order));
+      results['data'] && results['data'].filter(order => R.has('restaurant'));
     console.log('orders is', orders);
     this.setState({
       surveyData: orders,
@@ -129,7 +102,7 @@ class App extends Component {
           <h1 className="App-title">PayDay order</h1>
         </header>
         <Dropzone onDrop={this.onDrop.bind(this)} disablePreview={true}>
-          <p>Drop the .CSV file her, or click to open file browser</p>
+          <p>Drop the .CSV file here, or click to open file browser</p>
         </Dropzone>
 
         <div>
@@ -144,14 +117,16 @@ const RestaurantOrders = ({ orders }) =>
   <div>
     {orders &&
       Object.keys(orders).map(restaurant =>
-        <ul>
-          {' '}{console.log(orders) ||
-            Object.keys(orders[restaurant]).map(food =>
+        <div>
+          {'Restaurant:'} {restaurant}
+          <ul>
+            {Object.keys(orders[restaurant]).map(food =>
               <li>
                 {food} Quantity: {orders[restaurant][food]}
               </li>,
             )}{' '}
-        </ul>,
+          </ul>
+        </div>,
       )}
   </div>;
 
