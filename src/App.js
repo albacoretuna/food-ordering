@@ -97,7 +97,7 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <h1 className="App-title">Pay Day Food Ordering</h1>
+          <h1 className="App-title">Food Ordering</h1>
         </header>
         <div className="content">
           <Dropzone
@@ -174,6 +174,17 @@ const Mailer = ({ meals }) =>
             </a>
           </div>,
       )}
+          <div >
+            <a
+              href={encodeURI("mailto:helsinki@futurice.com?subject=Extra food is here&body=If you haven't ordered food, you need to know that extra food has arrived! Warm regards, FutuFriday team")}
+              className="mail-link"
+            >
+              <b className="restaurant-name">
+                Extra Food
+              </b>{' '}
+              Arrived! Send email
+            </a>
+          </div>,
   </div>;
 
 export default App;

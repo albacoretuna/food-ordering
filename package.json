@@ -1,7 +1,7 @@
 {
-  "name": "payday-pizza-order",
-  "version": "0.1.0",
-  "private": true,
+  "name": "food-ordering",
+  "version": "0.3.0",
+  "private": false,
   "dependencies": {
     "papaparse": "4.3.6",
     "ramda": "0.25.0",
