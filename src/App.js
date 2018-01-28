@@ -99,14 +99,30 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <h1 className="App-title">PayDay order</h1>
+          <h1 className="App-title">Pay Day Food Ordering</h1>
         </header>
-        <Dropzone onDrop={this.onDrop.bind(this)} disablePreview={true}>
-          <p>Drop the .CSV file here, or click to open file browser</p>
-        </Dropzone>
+        <div className="content">
+          <Dropzone
+            onDrop={this.onDrop.bind(this)}
+            disablePreview={true}
+            multiple={false}
+            style={{
+            display: "flex",
+            border: "5px dashed lightgreen",
+            width: "90%",
+            maxWidth: "400px",
+            height: "100px",
+            textAlign: "center",
+            background: "#e2f5e4",
+            margin:"10px auto"
+            }}
+          >
+            <p>Drop the .CSV file here, or click to open file browser</p>
+          </Dropzone>
 
-        <div>
-          <RestaurantOrders orders={this.state.groupByMeals} />
+          <div className="orders">
+            <RestaurantOrders orders={this.state.groupByMeals} />
+          </div>
         </div>
       </div>
     );
@@ -116,13 +132,13 @@ class App extends Component {
 const RestaurantOrders = ({ orders }) =>
   <div>
     {orders &&
-      Object.keys(orders).map(restaurant =>
-        <div>
-          {'Restaurant:'} {restaurant}
+      Object.keys(orders).map((restaurant, i) =>
+        <div key={i}>
+          {restaurant.replace('[', '').replace(']', '')}
           <ul>
-            {Object.keys(orders[restaurant]).map(food =>
-              <li>
-                {food} Quantity: {orders[restaurant][food]}
+            {Object.keys(orders[restaurant]).map((food, i) =>
+              <li key={i}>
+                <b> {orders[restaurant][food]} </b> X {food}
               </li>,
             )}{' '}
           </ul>
