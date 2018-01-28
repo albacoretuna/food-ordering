@@ -24,7 +24,32 @@
   margin-top: 10px;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+
+.mail-link {
+  display: block;
+  width: 100%;
+  background: #1873ff;
+  padding: 10px;
+
+  margin: 10px auto;
+
+  border: 1px solid grey;
+
+  max-width: 200px;
+
+  text-align: center;
+
+  color: white;
+
+}
+
+.mail-link:hover,
+.mail-link:visited, {
+  color: white;
+}
+.restaurant-name {
+  text-decoration: uppercase;
+  text-transform: uppercase;
+  display: block;
+
 }
