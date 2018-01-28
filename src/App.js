@@ -12,7 +12,7 @@ var data = [
     Timestamp: '1/28/2018 10:58:57',
     'Your Name': 'Omid',
     meal:
-      ' [SenChay SC02 Vermicelli salad (vermicelli, Chinese cabbage, carrot, cucumber, tofu, sesame, soy wasabi sauce)',
+      ' [SenChay] SC02 Vermicelli salad (vermicelli, Chinese cabbage, carrot, cucumber, tofu, sesame, soy wasabi sauce)',
   },
   {
     'Email Address': 'rosa.parks@blah.com',
@@ -36,8 +36,9 @@ const extractRestaurantNames = surveyData => {
   const restaurantNamePattern = /^\[.+\]/;
 
   return surveyData.map(order => {
+    if (!order.meal) return;
     return {
-      meal: order.meal,
+      meal: R.trim(order.meal || ''),
       restaurant: R.toLower(
         R.match(restaurantNamePattern, R.trim(order.meal))[0] ||
           '[unknown_restaurant]',
@@ -49,16 +50,30 @@ const extractRestaurantNames = surveyData => {
 };
 
 const groupByRestaurants = data => {
-  const byRestaurant = R.groupBy(order => order.restaurant)
-  return byRestaurant(data)
+  const byRestaurant = R.groupBy(order => order.restaurant);
+  return byRestaurant(data);
 };
 
-const reduceMeals = data => {
+const groupByMeals = data => {
+  const reducer = (acc, order) => {
+    if (!acc[order.meal]) {
+      acc[order.meal] = 1;
+    } else {
+      acc[order.meal] = acc[order.meal] + 1;
+    }
 
-}
+    return acc;
+  };
 
+  const countMeals = value => value.reduce(reducer, {});
 
-console.log('group by restaurant ', groupByRestaurants(extractRestaurantNames(data)));
+  return R.map(countMeals, data);
+};
+
+console.log(
+  'group by meals',
+  groupByMeals(groupByRestaurants(extractRestaurantNames(data))),
+);
 
 class App extends Component {
   constructor() {
@@ -83,7 +98,7 @@ class App extends Component {
       complete: onComplete,
       error: undefined,
       download: false,
-      skipEmptyLines: false,
+      skipEmptyLines: true,
       chunk: undefined,
       fastMode: undefined,
       beforeFirstChunk: undefined,
@@ -94,18 +109,17 @@ class App extends Component {
   };
 
   parseComplete = results => {
+    const orders =
+      results['data'] && results['data'].filter(order => !R.isEmpty(order));
+    console.log('orders is', orders);
     this.setState({
-      surveyData: results['data'],
+      surveyData: orders,
+      groupedByRestaurants: groupByRestaurants(extractRestaurantNames(orders)),
+      groupByMeals: groupByMeals(
+        groupByRestaurants(extractRestaurantNames(orders)),
+      ),
     });
-    console.log('surveyData', results['data']);
-  };
-
-  // input an array of objects, each a string containing restaurant tag and food name
-  // returns an object, keys are restaurant names, values are orders group by food names
-  // {fafa: [{food: "halumi salad", quantity: 5}]}
-  // if no restaurant name found, default to UNKNOWN
-  ordersByRestaurants = surveyData => {
-    surveyData.map();
+    console.log('state', this.state);
   };
 
   render() {
@@ -114,19 +128,31 @@ class App extends Component {
         <header className="App-header">
           <h1 className="App-title">PayDay order</h1>
         </header>
-        <Dropzone
-          onDrop={this.onDrop.bind(this)}
-          disablePreview={true}
-          accept="text/csv"
-        >
+        <Dropzone onDrop={this.onDrop.bind(this)} disablePreview={true}>
           <p>Drop the .CSV file her, or click to open file browser</p>
         </Dropzone>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+
+        <div>
+          <RestaurantOrders orders={this.state.groupByMeals} />
+        </div>
       </div>
     );
   }
 }
+
+const RestaurantOrders = ({ orders }) =>
+  <div>
+    {orders &&
+      Object.keys(orders).map(restaurant =>
+        <ul>
+          {' '}{console.log(orders) ||
+            Object.keys(orders[restaurant]).map(food =>
+              <li>
+                {food} Quantity: {orders[restaurant][food]}
+              </li>,
+            )}{' '}
+        </ul>,
+      )}
+  </div>;
 
 export default App;
