@@ -8,7 +8,6 @@ import './App.css';
 
 import { max, parse, format } from 'date-fns';
 
-import GitHubForkRibbon from 'react-github-fork-ribbon';
 
 /*
  * input array of objects, containing orders
@@ -91,12 +90,9 @@ class App extends Component {
   parseComplete = results => {
     const orders =
       results['data'] && results['data'].filter(order => R.has('restaurant'));
+
     this.setState({
-      surveyData: console.log(orders) || orders,
-      groupByRestaurants: groupByRestaurants(extractRestaurantNames(orders)),
-      groupByMeals: groupByMeals(
-        groupByRestaurants(extractRestaurantNames(orders)),
-      ),
+      surveyData: orders,
       latestOrder: getLatestOrder(orders),
     });
   };
@@ -112,17 +108,11 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <GitHubForkRibbon
-          position="right"
-          color="green"
-          href="https://github.com/omidfi/food-ordering"
-          target="_blank"
-        >
-          Fork me on GitHub
-        </GitHubForkRibbon>
+        <ForkMeRibbon />
         <header className="App-header">
           <h1 className="App-title">Food Ordering</h1>
         </header>
+
         <div className="content">
           {this.state.latestOrder &&
             <LatestOrderNotice
@@ -240,6 +230,16 @@ const Mailer = ({ surveyData = [] }) => {
     </div>
   );
 };
+
+const ForkMeRibbon = () => <a href="https://github.com/omidfi/food-ordering">
+          <img
+            style={{ position: 'absolute', top: '0', right: '0', border: '0' }}
+            src="https://camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67"
+            alt="Fork me on GitHub"
+            data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"
+          />
+        </a>
+
 
 const LatestOrderNotice = ({ latestOrder, quantity }) =>
   <div className="latest-order">
