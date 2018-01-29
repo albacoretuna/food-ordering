@@ -13,6 +13,7 @@
 
 .App-title {
   font-size: 1em;
+  text-align: left;
 }
 
 
@@ -34,6 +35,9 @@
   margin-top: 10px;
 }
 
+.restaurant-orders {
+  margin-bottom: 100px;
+}
 .restaurant-orders__p {
   background: #00abf4;
   color: white;

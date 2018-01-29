@@ -8,6 +8,8 @@ import './App.css';
 
 import { max, parse, format } from 'date-fns';
 
+import GitHubForkRibbon from 'react-github-fork-ribbon';
+
 /*
  * input array of objects, containing orders
  * outputs the same array, by extracting and putting the restaurant name as a property
@@ -110,6 +112,12 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <GitHubForkRibbon position="right"
+          color="green"
+          href="https://github.com/omidfi/food-ordering"
+          target="_blank" >
+          Fork me on GitHub
+        </GitHubForkRibbon>
         <header className="App-header">
           <h1 className="App-title">Food Ordering</h1>
         </header>
@@ -186,7 +194,7 @@ const Mailer = ({ meals }) =>
   <div className="mailer__div">
     {meals &&
       <p className="mailer__p">
-        Press each button to send an email to the ones who ordered from that
+        Press each button to send an email to the people who have ordered from that
         restaurant
       </p>}
     {meals &&
