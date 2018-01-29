@@ -3,9 +3,8 @@
   width: 100%;
 }
 
-
 .App-header {
-  background:#03A9F4;
+  background: #03a9f4;
   padding: 5px;
   color: white;
   text-align: center;
@@ -16,7 +15,6 @@
   text-align: left;
 }
 
-
 .content {
   margin-left: 10px;
 }
@@ -24,12 +22,11 @@
 .latest-order {
   background: #00abf4;
   color: white;
-  width:100%;
+  width: 100%;
   padding: 5px;
   text-align: left;
   margin: 30px auto 10px;
   max-width: 350px;
-
 }
 .orders {
   margin-top: 10px;
@@ -41,7 +38,7 @@
 .restaurant-orders__p {
   background: #00abf4;
   color: white;
-  width:100%;
+  width: 100%;
   padding: 5px;
   text-align: left;
   margin: 30px auto 10px;
@@ -66,32 +63,27 @@
 .mailer__p {
   background: #00abf4;
   color: white;
-  width:100%;
+  width: 100%;
   padding: 5px;
   text-align: left;
   margin-top: 0;
 }
+
 .mail-link {
   display: block;
   width: 100%;
   background: #1873ff;
   padding: 15px;
-
   margin: 20px auto;
-
   border: 1px solid grey;
-
   max-width: 200px;
-
   text-align: center;
-
   color: white;
-
   text-decoration: none;
 }
 
 .mail-link:hover,
-.mail-link:visited, {
+.mail-link:visited {
   color: white;
   text-decoration: none;
 }
@@ -99,5 +91,21 @@
   text-decoration: uppercase;
   text-transform: uppercase;
   display: block;
+}
 
+
+.who-ordered-what__ol {
+ font-size: 16px;
+ list-style-type: none;
+}
+
+.who-ordered-what__ol > li {
+  padding: 10px;
+}
+
+.who-ordered-what__ol>li:nth-child(odd){
+    background: lightblue;
+}
+.who-ordered-what__span {
+  font-weight: 600;
 }
