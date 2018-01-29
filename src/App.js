@@ -106,12 +106,12 @@ class App extends Component {
             multiple={false}
             style={{
               display: 'flex',
-              border: '5px dashed lightgreen',
+              border: '5px dashed #00BCD4',
               width: '90%',
               maxWidth: '400px',
-              height: '100px',
+              minHeight: '50px',
               textAlign: 'center',
-              background: '#e2f5e4',
+              background: 'rgba(0, 188, 212, 0.07)',
               margin: '10px auto',
             }}
           >
@@ -132,9 +132,13 @@ class App extends Component {
 }
 
 const RestaurantOrders = ({ orders }) =>
-  <div>
+  <div className="restaurant-orders">
     {!orders &&
       <p>Orders and buttons will appear down here after uploading the file</p>}
+    {orders &&
+      <p className="restaurant-orders__p">
+        The following need to be sent to the restaurants
+      </p>}
     {orders &&
       Object.keys(orders).map((restaurant, i) =>
         <div key={i}>
@@ -165,7 +169,7 @@ const mailToLink = ({ meals, restaurant }) =>
 const Mailer = ({ meals }) =>
   <div className="mailer__div">
     {meals &&
-      <p>
+      <p className="mailer__p">
         Press each button to send an email to the ones who ordered from that
         restaurant
       </p>}
@@ -177,9 +181,9 @@ const Mailer = ({ meals }) =>
             className="mail-link"
           >
             <b className="restaurant-name">
-              {restaurant}
+              {restaurant.replace('[','').replace(']','')}
             </b>{' '}
-            Arrived! Send email
+            Arrived!
           </a>
         </div>,
       )}

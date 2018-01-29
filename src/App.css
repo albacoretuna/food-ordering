@@ -5,9 +5,9 @@
 
 
 .App-header {
-  background-color: rgba(22,22,22,0.1);
+  background:#03A9F4;
   padding: 5px;
-  color: "#46865b";
+  color: white;
   text-align: center;
 }
 
@@ -24,16 +24,36 @@
   margin-top: 10px;
 }
 
+.restaurant-orders__p {
+  background: #00abf4;
+  color: white;
+  width:100%;
+  padding: 5px;
+  text-align: left;
+  margin-top: 10px;
+}
+
 .mailer {
   padding-top: 10px;
   text-align: center;
 }
 .mailer__div {
-  background: #71e4d84d;
-  max-width: 400px;
+  max-width: 350px;
   margin: 0 auto;
   border-radius: 3px;
-  padding: 10px;
+  border: 1px solid #00abf4;
+  border-top: none;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.mailer__p {
+  background: #00abf4;
+  color: white;
+  width:100%;
+  padding: 5px;
+  text-align: left;
+  margin-top: 0;
 }
 .mail-link {
   display: block;
@@ -51,11 +71,13 @@
 
   color: white;
 
+  text-decoration: none;
 }
 
 .mail-link:hover,
 .mail-link:visited, {
   color: white;
+  text-decoration: none;
 }
 .restaurant-name {
   text-decoration: uppercase;
