@@ -156,11 +156,11 @@ const RestaurantOrders = ({ surveyData = [] }) => {
   );
   return (
     <div className="restaurant-orders">
-      {!orders &&
+      {R.isEmpty(orders) &&
         <p>
           Orders and buttons will appear down here after uploading the file
         </p>}
-      {orders &&
+      {!R.isEmpty(orders) &&
         <p className="restaurant-orders__p">
           The following need to be sent to the restaurants
         </p>}
@@ -195,6 +195,8 @@ const mailToLink = ({ meals, restaurant }) =>
 
 const Mailer = ({ surveyData = [] }) => {
   const meals = groupByRestaurants(extractRestaurantNames(surveyData));
+
+  if (R.isEmpty(meals)) return <div />
   return (
     <div className="mailer__div">
       {meals &&
