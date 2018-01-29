@@ -51,7 +51,7 @@ const groupByMeals = data => {
 class App extends Component {
   constructor() {
     super();
-    this.state = { surveyData: [] };
+    this.state =  JSON.parse(localStorage.getItem('foodState')) || {} ;
   }
 
   onDrop = files => {
@@ -92,6 +92,14 @@ class App extends Component {
       ),
     });
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    try {
+    localStorage.foodState = JSON.stringify(this.state);
+    } catch (e) {
+      console.log('local storage not working')
+    }
+  }
 
   render() {
     return (
