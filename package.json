@@ -3,6 +3,7 @@
   "version": "0.3.0",
   "private": false,
   "dependencies": {
+    "date-fns": "1.29.0",
     "papaparse": "4.3.6",
     "ramda": "0.25.0",
     "react": "^16.2.0",

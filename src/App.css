@@ -20,6 +20,16 @@
   margin-left: 10px;
 }
 
+.latest-order {
+  background: #00abf4;
+  color: white;
+  width:100%;
+  padding: 5px;
+  text-align: left;
+  margin: 30px auto 10px;
+  max-width: 350px;
+
+}
 .orders {
   margin-top: 10px;
 }
@@ -30,7 +40,8 @@
   width:100%;
   padding: 5px;
   text-align: left;
-  margin-top: 10px;
+  margin: 30px auto 10px;
+  max-width: 350px;
 }
 
 .mailer {
@@ -45,6 +56,7 @@
   border-top: none;
   overflow: hidden;
   box-sizing: border-box;
+  margin: 30px auto 10px;
 }
 
 .mailer__p {

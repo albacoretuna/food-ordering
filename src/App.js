@@ -6,6 +6,8 @@ import * as R from 'ramda';
 import Dropzone from 'react-dropzone';
 import './App.css';
 
+import { max, parse, format } from 'date-fns';
+
 /*
  * input array of objects, containing orders
  * outputs the same array, by extracting and putting the restaurant name as a property
@@ -27,6 +29,9 @@ const extractRestaurantNames = surveyData => {
   });
 };
 
+// look at the orders and find the newest
+const getLatestOrder = orders =>
+  max.apply(null, orders.map(order => parse(order.Timestamp)));
 const groupByRestaurants = data => {
   const byRestaurant = R.groupBy(order => order.restaurant);
   return byRestaurant(data);
@@ -51,7 +56,7 @@ const groupByMeals = data => {
 class App extends Component {
   constructor() {
     super();
-    this.state =  JSON.parse(localStorage.getItem('foodState')) || {} ;
+    this.state = JSON.parse(localStorage.getItem('foodState')) || {};
   }
 
   onDrop = files => {
@@ -85,19 +90,20 @@ class App extends Component {
     const orders =
       results['data'] && results['data'].filter(order => R.has('restaurant'));
     this.setState({
-      surveyData: orders,
+      surveyData: console.log(orders) || orders,
       groupByRestaurants: groupByRestaurants(extractRestaurantNames(orders)),
       groupByMeals: groupByMeals(
         groupByRestaurants(extractRestaurantNames(orders)),
       ),
+      latestOrder: getLatestOrder(orders),
     });
   };
 
   componentDidUpdate(prevProps, prevState) {
     try {
-    localStorage.foodState = JSON.stringify(this.state);
+      localStorage.foodState = JSON.stringify(this.state);
     } catch (e) {
-      console.log('local storage not working')
+      console.log('local storage not working');
     }
   }
 
@@ -108,8 +114,10 @@ class App extends Component {
           <h1 className="App-title">Food Ordering</h1>
         </header>
         <div className="content">
+          {this.state.latestOrder &&
+            <LatestOrderNotice latestOrder={this.state.latestOrder} />}
           <Dropzone
-            onDrop={this.onDrop.bind(this)}
+            onDrop={this.onDrop}
             disablePreview={true}
             multiple={false}
             style={{
@@ -189,7 +197,7 @@ const Mailer = ({ meals }) =>
             className="mail-link"
           >
             <b className="restaurant-name">
-              {restaurant.replace('[','').replace(']','')}
+              {restaurant.replace('[', '').replace(']', '')}
             </b>{' '}
             Arrived!
           </a>
@@ -208,4 +216,9 @@ const Mailer = ({ meals }) =>
       </div>}
   </div>;
 
+const LatestOrderNotice = ({ latestOrder }) =>
+  <div className="latest-order">
+    latest order in the system is from:{' '}
+    {format(latestOrder, 'DD/MM/YYYY HH:mm')}{' '}
+  </div>;
 export default App;
