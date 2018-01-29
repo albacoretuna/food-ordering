@@ -149,10 +149,10 @@ class App extends Component {
             </p>
           </Dropzone>
           <div className="mailer">
-            <Mailer meals={this.state.groupByRestaurants} />
+            <Mailer surveyData={this.state.surveyData} />
           </div>
           <div className="orders">
-            <RestaurantOrders orders={this.state.groupByMeals} />
+            <RestaurantOrders surveyData={this.state.surveyData} />
           </div>
         </div>
       </div>
@@ -160,28 +160,36 @@ class App extends Component {
   }
 }
 
-const RestaurantOrders = ({ orders }) =>
-  <div className="restaurant-orders">
-    {!orders &&
-      <p>Orders and buttons will appear down here after uploading the file</p>}
-    {orders &&
-      <p className="restaurant-orders__p">
-        The following need to be sent to the restaurants
-      </p>}
-    {orders &&
-      Object.keys(orders).map((restaurant, i) =>
-        <div key={i}>
-          {restaurant}
-          <ul>
-            {Object.keys(orders[restaurant]).map((food, i) =>
-              <li key={i}>
-                <b> {orders[restaurant][food]} </b> X {food}
-              </li>,
-            )}{' '}
-          </ul>
-        </div>,
-      )}
-  </div>;
+const RestaurantOrders = ({ surveyData = [] }) => {
+  const orders = groupByMeals(
+    groupByRestaurants(extractRestaurantNames(surveyData)),
+  );
+  return (
+    <div className="restaurant-orders">
+      {!orders &&
+        <p>
+          Orders and buttons will appear down here after uploading the file
+        </p>}
+      {orders &&
+        <p className="restaurant-orders__p">
+          The following need to be sent to the restaurants
+        </p>}
+      {orders &&
+        Object.keys(orders).map((restaurant, i) =>
+          <div key={i}>
+            {restaurant}
+            <ul>
+              {Object.keys(orders[restaurant]).map((food, i) =>
+                <li key={i}>
+                  <b> {orders[restaurant][food]} </b> X {food}
+                </li>,
+              )}{' '}
+            </ul>
+          </div>,
+        )}
+    </div>
+  );
+};
 
 const mailToLink = ({ meals, restaurant }) =>
   `mailto:${meals[restaurant].map(
@@ -195,39 +203,43 @@ const mailToLink = ({ meals, restaurant }) =>
         ',',
       )}&body=Hello my futurice colleague, \n Please find your selected futufriday food at the kitchen. \n Warm regards, FutuFriday Team`;
 
-const Mailer = ({ meals }) =>
-  <div className="mailer__div">
-    {meals &&
-      <p className="mailer__p">
-        Press each button to send an email to the people who have ordered from
-        that restaurant
-      </p>}
-    {meals &&
-      Object.keys(meals).map((restaurant, i) =>
-        <div key={i}>
+const Mailer = ({ surveyData = [] }) => {
+  const meals = groupByRestaurants(extractRestaurantNames(surveyData));
+  return (
+    <div className="mailer__div">
+      {meals &&
+        <p className="mailer__p">
+          Press each button to send an email to the people who have ordered from
+          that restaurant
+        </p>}
+      {meals &&
+        Object.keys(meals).map((restaurant, i) =>
+          <div key={i}>
+            <a
+              href={encodeURI(mailToLink({ meals, restaurant }))}
+              className="mail-link"
+            >
+              <b className="restaurant-name">
+                {restaurant.replace('[', '').replace(']', '')}
+              </b>{' '}
+              Arrived!
+            </a>
+          </div>,
+        )}
+      {meals &&
+        <div>
           <a
-            href={encodeURI(mailToLink({ meals, restaurant }))}
+            href={encodeURI(
+              "mailto:helsinki@futurice.com?subject=Extra food is here&body=If you haven't ordered food, you need to know that extra food has arrived! Warm regards, FutuFriday team",
+            )}
             className="mail-link"
           >
-            <b className="restaurant-name">
-              {restaurant.replace('[', '').replace(']', '')}
-            </b>{' '}
-            Arrived!
+            <b className="restaurant-name">Extra Food</b> Arrived! Send email
           </a>
-        </div>,
-      )}
-    {meals &&
-      <div>
-        <a
-          href={encodeURI(
-            "mailto:helsinki@futurice.com?subject=Extra food is here&body=If you haven't ordered food, you need to know that extra food has arrived! Warm regards, FutuFriday team",
-          )}
-          className="mail-link"
-        >
-          <b className="restaurant-name">Extra Food</b> Arrived! Send email
-        </a>
-      </div>}
-  </div>;
+        </div>}
+    </div>
+  );
+};
 
 const LatestOrderNotice = ({ latestOrder, quantity }) =>
   <div className="latest-order">
