@@ -8,7 +8,6 @@ import './App.css';
 
 import { max, parse, format } from 'date-fns';
 
-
 /*
  * input array of objects, containing orders
  * outputs the same array, by extracting and putting the restaurant name as a property
@@ -144,6 +143,9 @@ class App extends Component {
           <div className="orders">
             <RestaurantOrders surveyData={this.state.surveyData} />
           </div>
+          <div className="who-orderd-what">
+            <WhoOrderedWhat surveyData={this.state.surveyData} />
+          </div>
         </div>
       </div>
     );
@@ -181,6 +183,31 @@ const RestaurantOrders = ({ surveyData = [] }) => {
   );
 };
 
+// who ordered what
+const WhoOrderedWhat = ({ surveyData = [] }) => {
+  const orders = surveyData.map(order => ({
+    name: order['Email Address'].split('@')[0].replace(/\./g, ' '),
+    meal: order.meal,
+  }));
+  const sortByNameCaseInsensitive = R.sortBy(
+    R.compose(R.toLower, R.prop('name')),
+  );
+  const sortedOrders = sortByNameCaseInsensitive(orders);
+  console.log(sortedOrders);
+
+  return (
+    <ol className="who-ordered-what__ol">
+      <p className="restaurant-orders__p">Who orderd what?</p>
+      {sortedOrders &&
+        sortedOrders.map((order, i) =>
+          <li key={i}>
+           <span className="who-ordered-what__span"> {order.name}</span>{' '}
+             {order.meal}
+          </li>,
+        )}
+    </ol>
+  );
+};
 const mailToLink = ({ meals, restaurant }) =>
   `mailto:${meals[restaurant].map(
     meal => meal.email,
@@ -196,7 +223,7 @@ const mailToLink = ({ meals, restaurant }) =>
 const Mailer = ({ surveyData = [] }) => {
   const meals = groupByRestaurants(extractRestaurantNames(surveyData));
 
-  if (R.isEmpty(meals)) return <div />
+  if (R.isEmpty(meals)) return <div />;
   return (
     <div className="mailer__div">
       {meals &&
@@ -233,15 +260,15 @@ const Mailer = ({ surveyData = [] }) => {
   );
 };
 
-const ForkMeRibbon = () => <a href="https://github.com/omidfi/food-ordering">
-          <img
-            style={{ position: 'absolute', top: '0', right: '0', border: '0' }}
-            src="https://camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67"
-            alt="Fork me on GitHub"
-            data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"
-          />
-        </a>
-
+const ForkMeRibbon = () =>
+  <a href="https://github.com/omidfi/food-ordering">
+    <img
+      style={{ position: 'absolute', top: '0', right: '0', border: '0' }}
+      src="https://camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67"
+      alt="Fork me on GitHub"
+      data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"
+    />
+  </a>;
 
 const LatestOrderNotice = ({ latestOrder, quantity }) =>
   <div className="latest-order">
