@@ -123,7 +123,7 @@ class App extends Component {
         </header>
         <div className="content">
           {this.state.latestOrder &&
-            <LatestOrderNotice latestOrder={this.state.latestOrder} />}
+            <LatestOrderNotice latestOrder={this.state.latestOrder} quantity={this.state.surveyData.length}/>}
           <Dropzone
             onDrop={this.onDrop}
             disablePreview={true}
@@ -224,9 +224,9 @@ const Mailer = ({ meals }) =>
       </div>}
   </div>;
 
-const LatestOrderNotice = ({ latestOrder }) =>
+const LatestOrderNotice = ({ latestOrder, quantity }) =>
   <div className="latest-order">
     latest order in the system is from:{' '}
-    {format(latestOrder, 'DD/MM/YYYY HH:mm')}{' '}
+    {format(latestOrder, 'DD/MM/YYYY HH:mm')}{' and for '}{quantity} {'people'}
   </div>;
 export default App;
