@@ -26,7 +26,7 @@ const extractRestaurantNames = surveyData => {
           '[unknown_restaurant]',
       ),
       email: order['Email Address'],
-      requestedBy: order['Your Name'],
+      requestedBy: order['Email Address'].split('@')[0],
     };
   });
 };
@@ -112,10 +112,12 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <GitHubForkRibbon position="right"
+        <GitHubForkRibbon
+          position="right"
           color="green"
           href="https://github.com/omidfi/food-ordering"
-          target="_blank" >
+          target="_blank"
+        >
           Fork me on GitHub
         </GitHubForkRibbon>
         <header className="App-header">
@@ -123,7 +125,10 @@ class App extends Component {
         </header>
         <div className="content">
           {this.state.latestOrder &&
-            <LatestOrderNotice latestOrder={this.state.latestOrder} quantity={this.state.surveyData.length}/>}
+            <LatestOrderNotice
+              latestOrder={this.state.latestOrder}
+              quantity={this.state.surveyData.length}
+            />}
           <Dropzone
             onDrop={this.onDrop}
             disablePreview={true}
@@ -194,8 +199,8 @@ const Mailer = ({ meals }) =>
   <div className="mailer__div">
     {meals &&
       <p className="mailer__p">
-        Press each button to send an email to the people who have ordered from that
-        restaurant
+        Press each button to send an email to the people who have ordered from
+        that restaurant
       </p>}
     {meals &&
       Object.keys(meals).map((restaurant, i) =>
@@ -227,6 +232,8 @@ const Mailer = ({ meals }) =>
 const LatestOrderNotice = ({ latestOrder, quantity }) =>
   <div className="latest-order">
     latest order in the system is from:{' '}
-    {format(latestOrder, 'DD/MM/YYYY HH:mm')}{' and for '}{quantity} {'people'}
+    {format(latestOrder, 'DD/MM/YYYY HH:mm')}
+    {' and for '}
+    {quantity} {'people'}
   </div>;
 export default App;
