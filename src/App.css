@@ -1,3 +1,7 @@
+
+* {
+  box-sizing: border-box;
+}
 .App {
   text-align: left;
   width: 100%;
@@ -8,15 +12,26 @@
   padding: 5px;
   color: white;
   text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items:center;
 }
 
+.fork-me {
+  color: white;
+  text-decoration: none;
+  text-align: right;
+  display: block;
+  font-size: 12px;
+  max-width: 50px;
+}
 .App-title {
   font-size: 1em;
   text-align: left;
 }
 
 .content {
-  margin-left: 10px;
+  margin: 0 auto;
 }
 
 .latest-order {
@@ -28,6 +43,12 @@
   margin: 30px auto 10px;
   max-width: 350px;
 }
+
+.latest-order__button {
+  margin: 5px;
+  display: block;
+}
+
 .orders {
   margin-top: 10px;
 }
@@ -38,11 +59,24 @@
 .restaurant-orders__p {
   background: #00abf4;
   color: white;
-  width: 100%;
+  width: 95%;
   padding: 5px;
   text-align: left;
   margin: 30px auto 10px;
   max-width: 350px;
+}
+
+.restaurant-orders__span {
+  text-transform: uppercase;
+  display:block;
+  position: relative;
+}
+.restaurant-orders__span::after {
+  content: "";
+  width: 5px;
+  display:block;
+  position:absolute;
+  background: red;
 }
 
 .mailer {
@@ -63,7 +97,7 @@
 .mailer__p {
   background: #00abf4;
   color: white;
-  width: 100%;
+  width: 95%;
   padding: 5px;
   text-align: left;
   margin-top: 0;
@@ -97,6 +131,7 @@
 .who-ordered-what__ol {
  font-size: 16px;
  list-style-type: none;
+ padding: 0;
 }
 
 .who-ordered-what__ol > li {
@@ -109,3 +144,16 @@
 .who-ordered-what__span {
   font-weight: 600;
 }
+
+
+@media print {
+ /* All your print styles go here */
+.App-header,
+.fork-me,
+ .mailer__div,
+  .file-uploader
+  {
+  display: none !important; }
+}
+
+

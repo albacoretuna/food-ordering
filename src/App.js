@@ -30,8 +30,9 @@ const extractRestaurantNames = surveyData => {
 };
 
 // look at the orders and find the newest
-const getLatestOrder = orders =>
+const getLatestOrder = ({ orders = [] }) =>
   max.apply(null, orders.map(order => parse(order.Timestamp)));
+
 const groupByRestaurants = data => {
   const byRestaurant = R.groupBy(order => order.restaurant);
   return byRestaurant(data);
@@ -92,7 +93,6 @@ class App extends Component {
 
     this.setState({
       surveyData: orders,
-      latestOrder: getLatestOrder(orders),
     });
   };
 
@@ -104,39 +104,51 @@ class App extends Component {
     }
   }
 
+  clearStorage = () => {
+    if (window.confirm('Are you sure?')) {
+      this.setState({ surveyData: [] });
+    }
+  };
+
   render() {
     return (
       <div className="App">
-        <ForkMeRibbon />
         <header className="App-header">
           <h1 className="App-title">Food Ordering</h1>
+          <a href="https://github.com/omidfi/food-ordering" className="fork-me">
+            {' '}Fork me on Github{' '}
+          </a>
         </header>
 
         <div className="content">
-          {this.state.latestOrder &&
+          {this.state.surveyData &&
+            !R.isEmpty(this.state.surveyData) &&
             <LatestOrderNotice
-              latestOrder={this.state.latestOrder}
-              quantity={this.state.surveyData.length}
+              surveyData={this.state.surveyData}
+              quantity={R.path(['surveyData', 'length'], this.state)}
+              clear={this.clearStorage}
             />}
-          <Dropzone
-            onDrop={this.onDrop}
-            disablePreview={true}
-            multiple={false}
-            style={{
-              display: 'flex',
-              border: '5px dashed #00BCD4',
-              width: '90%',
-              maxWidth: '400px',
-              minHeight: '50px',
-              textAlign: 'center',
-              background: 'rgba(0, 188, 212, 0.07)',
-              margin: '10px auto',
-            }}
-          >
-            <p>
-              Drop the orders .csv file here, or click to open a file browser
-            </p>
-          </Dropzone>
+          <div className="file-uploader">
+            <Dropzone
+              onDrop={this.onDrop}
+              disablePreview={true}
+              multiple={false}
+              style={{
+                display: 'flex',
+                border: '5px dashed #00BCD4',
+                width: '90%',
+                maxWidth: '400px',
+                minHeight: '50px',
+                textAlign: 'center',
+                background: 'rgba(0, 188, 212, 0.07)',
+                margin: '10px auto',
+              }}
+            >
+              <p>
+                Drop the orders .csv file here, or click to open a file browser
+              </p>
+            </Dropzone>
+          </div>
           <div className="mailer">
             <Mailer surveyData={this.state.surveyData} />
           </div>
@@ -169,7 +181,9 @@ const RestaurantOrders = ({ surveyData = [] }) => {
       {orders &&
         Object.keys(orders).map((restaurant, i) =>
           <div key={i}>
-            {restaurant}
+            <span className="restaurant-orders__span">
+              {' '}{restaurant}{' '}
+            </span>
             <ul>
               {Object.keys(orders[restaurant]).map((food, i) =>
                 <li key={i}>
@@ -201,8 +215,8 @@ const WhoOrderedWhat = ({ surveyData = [] }) => {
       {sortedOrders &&
         sortedOrders.map((order, i) =>
           <li key={i}>
-           <span className="who-ordered-what__span"> {order.name}</span>{' '}
-             {order.meal}
+            <span className="who-ordered-what__span"> {order.name}</span>{' '}
+            {order.meal}
           </li>,
         )}
     </ol>
@@ -260,21 +274,20 @@ const Mailer = ({ surveyData = [] }) => {
   );
 };
 
-const ForkMeRibbon = () =>
-  <a href="https://github.com/omidfi/food-ordering">
-    <img
-      style={{ position: 'absolute', top: '0', right: '0', border: '0' }}
-      src="https://camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67"
-      alt="Fork me on GitHub"
-      data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"
-    />
-  </a>;
+const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
+  const latestOrder = getLatestOrder({ orders: surveyData });
+  return (
+    <div className="latest-order">
+      latest order in the system is from:{' '}
+      {format(latestOrder, 'DD/MM/YYYY HH:mm')}
+      {' and for '}
+      {quantity} {'people'}
+      <button onClick={clear} className="latest-order__button">
+        Clear orders
+      </button>
+      <p>Note: data is only in your browser, it won't affect anyone else</p>
+    </div>
+  );
+};
 
-const LatestOrderNotice = ({ latestOrder, quantity }) =>
-  <div className="latest-order">
-    latest order in the system is from:{' '}
-    {format(latestOrder, 'DD/MM/YYYY HH:mm')}
-    {' and for '}
-    {quantity} {'people'}
-  </div>;
 export default App;
