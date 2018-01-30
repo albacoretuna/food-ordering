@@ -1,6 +1,6 @@
 {
   "name": "food-ordering",
-  "version": "8.0.0",
+  "version": "9.0.0",
   "private": false,
   "dependencies": {
     "date-fns": "1.29.0",
