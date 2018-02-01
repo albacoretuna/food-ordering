@@ -105,7 +105,7 @@ class App extends Component {
   }
 
   clearStorage = () => {
-    if (window.confirm('Are you sure?')) {
+    if (window.confirm('Are you sure you want to delete the order information from your browser?')) {
       this.setState({ surveyData: [] });
     }
   };
@@ -245,6 +245,7 @@ const Mailer = ({ surveyData = [] }) => {
           Press each button to send an email to the people who have ordered from
           that restaurant
         </p>}
+        <div className="mailer__wrapper">
       {meals &&
         Object.keys(meals).map((restaurant, i) =>
           <div key={i}>
@@ -270,6 +271,7 @@ const Mailer = ({ surveyData = [] }) => {
             <b className="restaurant-name">Extra Food</b> Arrived! Send email
           </a>
         </div>}
+      </div>
     </div>
   );
 };
@@ -279,7 +281,7 @@ const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
   return (
     <div className="latest-order">
       latest order in the system is from:{' '}
-      {format(latestOrder, 'DD/MM/YYYY HH:mm')}
+      <b>{format(latestOrder, 'DD/MM/YYYY HH:mm')}</b>
       {' and for '}
       {quantity} {'people'}
       <button onClick={clear} className="latest-order__button">
