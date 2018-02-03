@@ -166,6 +166,7 @@ class App extends Component {
                     </li>
                     <li> Check that in every meal name, the restaurant name is tagged in brackets for example: [Fafa] </li>
 
+                    <li> Make sure you uploaded the correct CSV file </li>
                     <li> Contact Omid :D </li>
                     <li> Contact IT </li>
                   </ul>
@@ -230,11 +231,11 @@ const RestaurantOrders = ({ surveyData = [] }) => {
         </p>}
       {!R.isEmpty(orders) &&
         <p className="restaurant-orders__p">
-          The following need to be sent to the restaurants
+          The following need to be sent to the restaurants by email
         </p>}
       {orders &&
         Object.keys(orders).map((restaurant, i) =>
-          <div key={i}>
+          <div key={i} className="restaurant-orders__div">
             <span className="restaurant-orders__span">
               {' '}{restaurant}{' '}
             </span>
@@ -357,6 +358,7 @@ const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
         Clear orders
       </button>
       <p>Note: data is only in your browser, it won't affect anyone else</p>
+      <p>To upload a new order file, first clear the current orders. </p>
     </div>
   );
 };

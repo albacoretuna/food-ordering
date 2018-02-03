@@ -37,9 +37,10 @@
   color: black;
   width: 100%;
   padding: 5px;
-  text-align: left;
   margin: 30px auto 10px;
-  max-width: 350px;
+  max-width: 750px;
+  text-align:center;
+  border: 1px solid lightblue;
 }
 
 .latest-order__button {
@@ -49,6 +50,8 @@
 
 .orders {
   margin-top: 10px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .restaurant-orders {
@@ -57,11 +60,9 @@
 .restaurant-orders__p {
   background: #00abf4;
   color: white;
-  width: 95%;
   padding: 5px;
   text-align: left;
-  margin: 30px auto 10px;
-  max-width: 350px;
+  margin: 0;
 }
 
 .restaurant-orders__span {
@@ -75,6 +76,11 @@
   display: block;
   position: absolute;
   background: red;
+}
+
+.restaurant-orders__div {
+  border-bottom: 1px solid lightblue;
+  margin: 10px 10px;
 }
 
 .mailer {
@@ -150,6 +156,8 @@
   font-size: 16px;
   list-style-type: none;
   padding: 0;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .who-ordered-what__ol > li {
@@ -157,7 +165,7 @@
 }
 
 .who-ordered-what__ol > li:nth-child(odd) {
-  background: lightblue;
+  background: rgba(52, 203, 221, 0.2);
 }
 .who-ordered-what__span {
   font-weight: 600;
