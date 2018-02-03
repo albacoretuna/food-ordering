@@ -34,8 +34,7 @@
 }
 
 .latest-order {
-  background: #00abf4;
-  color: white;
+  color: black;
   width: 100%;
   padding: 5px;
   text-align: left;
@@ -44,7 +43,7 @@
 }
 
 .latest-order__button {
-  margin: 5px;
+  margin: 10px auto;
   display: block;
 }
 
@@ -124,6 +123,7 @@
   text-align: center;
   color: white;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .mail-link:hover,

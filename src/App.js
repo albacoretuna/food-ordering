@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as CSVParser from 'papaparse';
 import * as R from 'ramda';
-import Joi from 'joi';
+import Joi from 'joi-browser';
 
 // file uploader
 import Dropzone from 'react-dropzone';
@@ -180,6 +180,8 @@ class App extends Component {
               clear={this.clearStorage}
             />}
           <div className="file-uploader">
+          {(!this.state.surveyData ||
+            R.isEmpty(this.state.surveyData)) &&
             <Dropzone
               onDrop={this.onDrop}
               disablePreview={true}
@@ -199,6 +201,7 @@ class App extends Component {
                 Drop the orders .csv file here, or click to open a file browser
               </p>
             </Dropzone>
+            }
           </div>
           <div className="mailer">
             <Mailer surveyData={this.state.surveyData} />
@@ -222,7 +225,7 @@ const RestaurantOrders = ({ surveyData = [] }) => {
   return (
     <div className="restaurant-orders">
       {R.isEmpty(orders) &&
-        <p>
+        <p className="restaurant-orders__p">
           Orders and buttons will appear down here after uploading the file
         </p>}
       {!R.isEmpty(orders) &&
@@ -319,8 +322,8 @@ const Mailer = ({ surveyData = [] }) => {
     <div className="mailer__div">
       {meals &&
         <p className="mailer__p">
-          Press each button to send an email to the people who have ordered from
-          that restaurant
+          Press each button to send an email to the ones who have ordered from
+          that restaurant. (opens your email client)
         </p>}
       <div className="mailer__wrapper">
         {meals &&
@@ -337,17 +340,6 @@ const Mailer = ({ surveyData = [] }) => {
               </a>
             </div>,
           )}
-        {meals &&
-          <div>
-            <a
-              href={encodeURI(
-                "mailto:helsinki@futurice.com?subject=Extra food is here&body=If you haven't ordered food, you need to know that extra food has arrived! Warm regards, FutuFriday team",
-              )}
-              className="mail-link"
-            >
-              <b className="restaurant-name">Extra Food</b> Arrived! Send email
-            </a>
-          </div>}
       </div>
     </div>
   );

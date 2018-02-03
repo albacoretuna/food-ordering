@@ -4,7 +4,7 @@
   "private": false,
   "dependencies": {
     "date-fns": "1.29.0",
-    "joi": "13.1.2",
+    "joi-browser": "13.0.1",
     "papaparse": "4.3.6",
     "ramda": "0.25.0",
     "react": "^16.2.0",
