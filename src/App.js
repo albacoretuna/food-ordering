@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as CSVParser from 'papaparse';
 import * as R from 'ramda';
+import Joi from 'joi';
 
 // file uploader
 import Dropzone from 'react-dropzone';
@@ -13,7 +14,7 @@ import { max, parse, format } from 'date-fns';
  * outputs the same array, by extracting and putting the restaurant name as a property
  */
 const extractRestaurantNames = surveyData => {
-  const restaurantNamePattern = /^\[.+\]/;
+  const restaurantNamePattern = /\[.+\]/;
 
   return surveyData.map(order => {
     if (!order.meal) return '';
@@ -29,6 +30,18 @@ const extractRestaurantNames = surveyData => {
   });
 };
 
+const ordersSchemaIsInvalid = orders => {
+  const restaurantNamePattern = /\[.+\]/;
+  const ordersSchema = Joi.array().items(
+    Joi.object({
+      Timestamp: Joi.date().required(),
+      'Email Address': Joi.string().email().required(),
+      meal: Joi.string().min(5).regex(restaurantNamePattern).required(),
+    }),
+  );
+
+  return Joi.validate(orders, ordersSchema, { allowUnknown: true }).error;
+};
 // look at the orders and find the newest
 const getLatestOrder = ({ orders = [] }) =>
   max.apply(null, orders.map(order => parse(order.Timestamp)));
@@ -88,11 +101,23 @@ class App extends Component {
   };
 
   parseComplete = results => {
-    const orders =
-      results['data'] && results['data'].filter(order => R.has('restaurant'));
+    const orders = results['data'];
+
+    // clear previous orders
+    this.setState({ surveyData: [] });
+
+    if (ordersSchemaIsInvalid(orders)) {
+      this.setState({
+        error: ordersSchemaIsInvalid(orders),
+        surveyData: [],
+      });
+
+      return;
+    }
 
     this.setState({
       surveyData: orders,
+      error: null,
     });
   };
 
@@ -105,7 +130,11 @@ class App extends Component {
   }
 
   clearStorage = () => {
-    if (window.confirm('Are you sure you want to delete the order information from your browser?')) {
+    if (
+      window.confirm(
+        'Are you sure you want to delete the order information from your browser?',
+      )
+    ) {
       this.setState({ surveyData: [] });
     }
   };
@@ -121,6 +150,28 @@ class App extends Component {
         </header>
 
         <div className="content">
+          <div className="error-container">
+            {this.state.error &&
+              this.state.error.details.map(errMessage =>
+                <p className="error-container__p">
+                  <b>Problem with your uploaded .CSV file</b> <br /> Error:{' '}
+                  {errMessage.message} <br />These might help: <br />{' '}
+                  <ul>
+                    {' '}<li>
+                      {' '}Make sure the Google form collects email addresses{' '}
+                    </li>
+                    <li>
+                      {' '}Check that the question for food is titled exactly
+                      as: meal{' '}
+                    </li>
+                    <li> Check that in every meal name, the restaurant name is tagged in brackets for example: [Fafa] </li>
+
+                    <li> Contact Omid :D </li>
+                    <li> Contact IT </li>
+                  </ul>
+                </p>,
+              )}
+          </div>
           {this.state.surveyData &&
             !R.isEmpty(this.state.surveyData) &&
             <LatestOrderNotice
@@ -222,17 +273,43 @@ const WhoOrderedWhat = ({ surveyData = [] }) => {
     </ol>
   );
 };
-const mailToLink = ({ meals, restaurant }) =>
-  `mailto:${meals[restaurant].map(
-    meal => meal.email,
-  )[0]}?subject=${restaurant} arrived, your food is here&cc=${meals[
-    restaurant
-  ].shift() &&
-    meals[restaurant]
-      .map(meal => meal.email)
-      .join(
-        ',',
-      )}&body=Hello my futurice colleague, \n Please find your selected futufriday food at the kitchen. \n Warm regards, FutuFriday Team`;
+
+// a workaround for long mailto links, from https://goo.gl/PT4WXo
+const sendEmails = ({ meals, restaurant }) => {
+  const timeout = 2000;
+
+  const mailtoPrefix = `mailto:?subject=${restaurant} arrived, your food is here&body=Hello, \n Please find your selected futufriday food at the kitchen. \n Regards, FutuFriday Team&bcc=`;
+
+  const maxUrlCharacters = 1900;
+  const separator = ';';
+  let currentIndex = 0;
+  let nextIndex = 0;
+  const emails =
+    restaurant && meals[restaurant].map(meal => meal.email).join(';');
+
+  if (!emails) {
+    return;
+  }
+
+  if (emails.length < maxUrlCharacters) {
+    window.location = mailtoPrefix + emails;
+    return;
+  }
+
+  do {
+    currentIndex = nextIndex;
+    nextIndex = emails.indexOf(separator, currentIndex + 1);
+  } while (nextIndex !== -1 && nextIndex < maxUrlCharacters);
+
+  if (currentIndex === -1) {
+    window.location = mailtoPrefix + emails;
+  } else {
+    window.location = mailtoPrefix + emails.slice(0, currentIndex);
+    setTimeout(function() {
+      sendEmails(emails.slice(currentIndex + 1));
+    }, timeout);
+  }
+};
 
 const Mailer = ({ surveyData = [] }) => {
   const meals = groupByRestaurants(extractRestaurantNames(surveyData));
@@ -245,32 +322,32 @@ const Mailer = ({ surveyData = [] }) => {
           Press each button to send an email to the people who have ordered from
           that restaurant
         </p>}
-        <div className="mailer__wrapper">
-      {meals &&
-        Object.keys(meals).map((restaurant, i) =>
-          <div key={i}>
+      <div className="mailer__wrapper">
+        {meals &&
+          Object.keys(meals).map((restaurant, i) =>
+            <div key={i}>
+              <a
+                onClick={() => sendEmails({ meals, restaurant })}
+                className="mail-link"
+              >
+                <b className="restaurant-name">
+                  {restaurant.replace('[', '').replace(']', '')}
+                </b>{' '}
+                Arrived!
+              </a>
+            </div>,
+          )}
+        {meals &&
+          <div>
             <a
-              href={encodeURI(mailToLink({ meals, restaurant }))}
+              href={encodeURI(
+                "mailto:helsinki@futurice.com?subject=Extra food is here&body=If you haven't ordered food, you need to know that extra food has arrived! Warm regards, FutuFriday team",
+              )}
               className="mail-link"
             >
-              <b className="restaurant-name">
-                {restaurant.replace('[', '').replace(']', '')}
-              </b>{' '}
-              Arrived!
+              <b className="restaurant-name">Extra Food</b> Arrived! Send email
             </a>
-          </div>,
-        )}
-      {meals &&
-        <div>
-          <a
-            href={encodeURI(
-              "mailto:helsinki@futurice.com?subject=Extra food is here&body=If you haven't ordered food, you need to know that extra food has arrived! Warm regards, FutuFriday team",
-            )}
-            className="mail-link"
-          >
-            <b className="restaurant-name">Extra Food</b> Arrived! Send email
-          </a>
-        </div>}
+          </div>}
       </div>
     </div>
   );

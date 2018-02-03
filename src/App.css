@@ -172,3 +172,17 @@
     display: none !important;
   }
 }
+
+.error-container {
+  margin: 20px auto;
+  display: flex;
+  justify-content: center;
+  align-content: cneter;
+  background: green;
+  font-size: 18px;
+  color: white;
+  max-width: 700px;
+}
+.error-container__p {
+  padding: 5px;
+}
