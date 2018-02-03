@@ -222,17 +222,44 @@ const WhoOrderedWhat = ({ surveyData = [] }) => {
     </ol>
   );
 };
-const mailToLink = ({ meals, restaurant }) =>
-  `mailto:${meals[restaurant].map(
-    meal => meal.email,
-  )[0]}?subject=${restaurant} arrived, your food is here&cc=${meals[
-    restaurant
-  ].shift() &&
-    meals[restaurant]
-      .map(meal => meal.email)
-      .join(
-        ',',
-      )}&body=Hello my futurice colleague, \n Please find your selected futufriday food at the kitchen. \n Warm regards, FutuFriday Team`;
+
+
+// a workaround for long mailto links, from https://goo.gl/PT4WXo
+const sendEmails = ({meals, restaurant}) => {
+  const timeout = 2000;
+
+  const mailtoPrefix = `mailto:?subject=${restaurant} arrived, your food is here&body=Hello, \n Please find your selected futufriday food at the kitchen. \n Regards, FutuFriday Team&bcc=`;
+
+  const maxUrlCharacters = 1900;
+  const separator = ';';
+  let currentIndex = 0;
+  let nextIndex = 0;
+  const emails = restaurant && meals[restaurant].map(meal => meal.email).join( ';')
+
+  if(!emails) {
+    return;
+  }
+
+  if (emails.length < maxUrlCharacters) {
+    window.location = mailtoPrefix + emails;
+    return;
+  }
+
+  do {
+    currentIndex = nextIndex;
+    nextIndex = emails.indexOf(separator, currentIndex + 1);
+  } while (nextIndex !== -1 && nextIndex < maxUrlCharacters)
+
+  if (currentIndex === -1) {
+    window.location = mailtoPrefix + emails;
+  } else {
+    window.location = mailtoPrefix + emails.slice(0, currentIndex);
+    setTimeout(function () {
+      sendEmails(emails.slice(currentIndex + 1));
+    }, timeout);
+  }
+}
+
 
 const Mailer = ({ surveyData = [] }) => {
   const meals = groupByRestaurants(extractRestaurantNames(surveyData));
@@ -250,7 +277,7 @@ const Mailer = ({ surveyData = [] }) => {
         Object.keys(meals).map((restaurant, i) =>
           <div key={i}>
             <a
-              href={encodeURI(mailToLink({ meals, restaurant }))}
+              onClick={() => sendEmails({meals, restaurant})}
               className="mail-link"
             >
               <b className="restaurant-name">
