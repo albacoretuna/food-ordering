@@ -441,8 +441,10 @@ const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
   );
 };
 
-const ErrorContainer = error =>
-  error.error &&
+const ErrorContainer = error => {
+  if(!(error.error && error.error.details)) return null;
+
+  return error.error &&
   error.error.details &&
   error.error.details.map((errMessage, i) =>
     <div className="error-container" key={i}>
@@ -462,6 +464,7 @@ const ErrorContainer = error =>
         <li> Contact IT </li>
       </ul>
     </div>,
-  );
+  )
+}
 
 export default App;
