@@ -12,7 +12,7 @@ ENV CI=true
 # Install app dependencies
 COPY package.json /src/app/
 RUN npm install && \
-    npm install -g pushstate-server
+    npm install pm2 -g
 
 # Bundle app source
 COPY . /src/app
@@ -23,4 +23,4 @@ RUN npm run build
 EXPOSE 8000
 
 # defined in package.json
-CMD [ "npm", "run", "start:prod" ]
+CMD [ "pm2-runtime", "server.js" ]

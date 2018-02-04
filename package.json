@@ -1,22 +1,38 @@
 {
   "name": "food-ordering",
   "version": "10.1.0",
+  "description": "A web app for mass ordering food, using React, Express, ...",
   "private": false,
+  "proxy": "http://localhost:8080",
   "dependencies": {
+    "axios": "0.17.1",
+    "body-parser": "1.18.2",
+    "css-toggle-switch": "4.1.0",
     "date-fns": "1.29.0",
+    "express": "4.16.2",
+    "express-promise-router": "3.0.1",
+    "joi": "13.1.2",
     "joi-browser": "13.0.1",
     "papaparse": "4.3.6",
+    "pg": "7.4.1",
     "ramda": "0.25.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-dropzone": "4.2.7",
+    "react-notify-toast": "0.4.0",
     "react-scripts": "1.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "concurrently \"nodemon server.js\" \"react-scripts start\"",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "start:prod": "pushstate-server build 8000"
-  }
+  },
+  "devDependencies": {
+    "concurrently": "3.5.1",
+    "dotenv": "5.0.0",
+    "nodemon": "1.14.12"
+  },
+  "licence": "MIT"
 }
