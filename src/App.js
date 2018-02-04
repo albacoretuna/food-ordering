@@ -1,6 +1,17 @@
 import React, { Component } from 'react';
 import * as CSVParser from 'papaparse';
-import * as R from 'ramda';
+import {
+  trim,
+  match,
+  map,
+  toLower,
+  groupBy,
+  path,
+  isEmpty,
+  sortBy,
+  prop,
+  compose
+} from 'ramda';
 import Joi from 'joi-browser';
 import axios from 'axios';
 
@@ -25,9 +36,9 @@ const extractRestaurantNames = surveyData => {
   return surveyData.map(order => {
     if (!order.meal) return '';
     return {
-      meal: R.trim(order.meal || ''),
-      restaurant: R.toLower(
-        R.match(restaurantNamePattern, R.trim(order.meal))[0] ||
+      meal: trim(order.meal || ''),
+      restaurant: toLower(
+        match(restaurantNamePattern, trim(order.meal))[0] ||
           '[unknown_restaurant]',
       ),
       email: order['Email Address'],
@@ -63,7 +74,7 @@ const getLatestOrder = ({ orders = [] }) =>
   max.apply(null, orders.map(order => parse(order.Timestamp)));
 
 const groupByRestaurants = data => {
-  const byRestaurant = R.groupBy(order => order.restaurant);
+  const byRestaurant = groupBy(order => order.restaurant);
   return byRestaurant(data);
 };
 
@@ -80,7 +91,7 @@ const groupByMeals = data => {
 
   const countMeals = value => value.reduce(reducer, {});
 
-  return R.map(countMeals, data);
+  return map(countMeals, data);
 };
 
 const persistToDatabase = data =>
@@ -94,7 +105,7 @@ class App extends Component {
       surveyData: [],
       error: null,
       adminView: false,
-      loading: false,
+      loading: true,
     };
   }
 
@@ -203,19 +214,19 @@ class App extends Component {
           <div className="content">
             {this.state.error && <ErrorContainer error={this.state.error} />}
             {this.state.loading &&
-              <div class="loading-holder">
-                <div className="loading" />Loading...
+              <div className="loading-holder">
+                <div className="loading" /><p className="loading-holder__p">Loading...</p>
               </div>}
             {this.state.surveyData &&
               this.state.adminView &&
-              !R.isEmpty(this.state.surveyData) &&
+              !isEmpty(this.state.surveyData) &&
               <LatestOrderNotice
                 surveyData={this.state.surveyData}
-                quantity={R.path(['surveyData', 'length'], this.state)}
+                quantity={path(['surveyData', 'length'], this.state)}
                 clear={this.clearSurveyData}
               />}
             <div className="file-uploader">
-              {(!this.state.surveyData || R.isEmpty(this.state.surveyData)) &&
+              {((!this.state.surveyData || isEmpty(this.state.surveyData)) && !this.state.loading) &&
                 <Dropzone
                   onDrop={this.onDrop}
                   disablePreview={true}
@@ -274,11 +285,11 @@ const RestaurantOrders = ({ surveyData = [] }) => {
   );
   return (
     <div className="restaurant-orders">
-      {R.isEmpty(orders) &&
+      {isEmpty(orders) &&
         <p className="restaurant-orders__p">
           Orders and buttons will appear down here after uploading the file
         </p>}
-      {!R.isEmpty(orders) &&
+      {!isEmpty(orders) &&
         <p className="restaurant-orders__p">
           The following need to be sent to the restaurants by email
         </p>}
@@ -308,9 +319,7 @@ const WhoOrderedWhat = ({ surveyData = [] }) => {
     meal: order.meal,
     Timestamp: order.Timestamp,
   }));
-  const sortByNameCaseInsensitive = R.sortBy(
-    R.compose(R.toLower, R.prop('name')),
-  );
+  const sortByNameCaseInsensitive = sortBy(compose(toLower, prop('name')));
   const sortedOrders = sortByNameCaseInsensitive(orders);
 
   return (
@@ -372,7 +381,7 @@ const sendEmails = ({ meals, restaurant }) => {
 const Mailer = ({ surveyData = [] }) => {
   const meals = groupByRestaurants(extractRestaurantNames(surveyData));
 
-  if (R.isEmpty(meals)) return <div />;
+  if (isEmpty(meals)) return <div />;
   return (
     <div className="mailer__div">
       {meals &&
@@ -442,29 +451,31 @@ const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
 };
 
 const ErrorContainer = error => {
-  if(!(error.error && error.error.details)) return null;
+  if (!(error.error && error.error.details)) return null;
 
-  return error.error &&
-  error.error.details &&
-  error.error.details.map((errMessage, i) =>
-    <div className="error-container" key={i}>
-      <p className="error-container__p">
-        <b>Problem with your uploaded .CSV file</b> Error: {errMessage.message}{' '}
-        <br />These might help: <br />{' '}
-      </p>
-      <ul>
-        {' '}<li> Make sure the Google form collects email addresses </li>
-        <li> Check that the question for food is titled exactly as: meal </li>
-        <li>
-          {' '}Check that in every meal name, the restaurant name is tagged in
-          brackets for example: [Fafa]{' '}
-        </li>
-        <li> Make sure you uploaded the correct CSV file </li>
-        <li> Contact Omid :D </li>
-        <li> Contact IT </li>
-      </ul>
-    </div>,
-  )
-}
+  return (
+    error.error &&
+    error.error.details &&
+    error.error.details.map((errMessage, i) =>
+      <div className="error-container" key={i}>
+        <p className="error-container__p">
+          <b>Problem with your uploaded .CSV file</b> Error:{' '}
+          {errMessage.message} <br />These might help: <br />{' '}
+        </p>
+        <ul>
+          {' '}<li> Make sure the Google form collects email addresses </li>
+          <li> Check that the question for food is titled exactly as: meal </li>
+          <li>
+            {' '}Check that in every meal name, the restaurant name is tagged in
+            brackets for example: [Fafa]{' '}
+          </li>
+          <li> Make sure you uploaded the correct CSV file </li>
+          <li> Contact Omid :D </li>
+          <li> Contact IT </li>
+        </ul>
+      </div>,
+    )
+  );
+};
 
 export default App;

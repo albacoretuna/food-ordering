@@ -215,13 +215,19 @@
 .error-container__p {
   padding: 5px;
 }
+
 .loading-holder {
   position:fixed;
   left: 50%;
-  background: rgba(240, 240, 240, 0.3);
   padding: 20px;
   transform: translate(-50%, 0);
+  text-align:center;
 }
+
+.loading-holder__p {
+  margin-top: 10px;
+}
+
 .loading {
   left: 50%;
   animation: spin 1s linear infinite;
