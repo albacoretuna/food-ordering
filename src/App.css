@@ -16,13 +16,22 @@
   align-items: center;
 }
 
+.footer {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  width: 100%;
+  min-height: 40px;
+  background: blue;
+}
 .fork-me {
   color: white;
   text-decoration: none;
-  text-align: right;
-  display: block;
+  text-align: center;
   font-size: 12px;
-  max-width: 50px;
+  width: 100%;
+  display: block;
+  margin: 15px;
 }
 .App-title {
   font-size: 1em;
@@ -39,7 +48,7 @@
   padding: 5px;
   margin: 30px auto 10px;
   max-width: 750px;
-  text-align:center;
+  text-align: center;
   border: 1px solid lightblue;
 }
 
@@ -144,7 +153,6 @@
   justify-content: space-around;
   flex-wrap: wrap;
 }
-
 
 .restaurant-name {
   text-decoration: uppercase;

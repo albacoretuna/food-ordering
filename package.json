@@ -2,7 +2,9 @@
   "name": "food-ordering",
   "version": "10.1.0",
   "private": false,
+  "proxy": "http://localhost:8080",
   "dependencies": {
+    "axios": "0.17.1",
     "date-fns": "1.29.0",
     "joi-browser": "13.0.1",
     "papaparse": "4.3.6",

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import * as CSVParser from 'papaparse';
 import * as R from 'ramda';
 import Joi from 'joi-browser';
+import axios from 'axios';
 
 // file uploader
 import Dropzone from 'react-dropzone';
@@ -51,6 +52,9 @@ const groupByRestaurants = data => {
   return byRestaurant(data);
 };
 
+const persistToDatabase = data =>
+  axios.post('/api/survey-data/add', {surveyData: data})
+
 const groupByMeals = data => {
   const reducer = (acc, order) => {
     if (!acc[order.meal]) {
@@ -70,7 +74,10 @@ const groupByMeals = data => {
 class App extends Component {
   constructor() {
     super();
-    this.state = JSON.parse(localStorage.getItem('foodState')) || {};
+    this.state =  {
+      surveyData: [],
+      error: null
+    };
   }
 
   onDrop = files => {
@@ -100,7 +107,7 @@ class App extends Component {
     CSVParser.parse(files[0], CSVParserConfig);
   };
 
-  parseComplete = results => {
+  parseComplete = async (results) => {
     const orders = results['data'];
 
     // clear previous orders
@@ -108,8 +115,8 @@ class App extends Component {
 
     if (ordersSchemaIsInvalid(orders)) {
       this.setState({
-        error: ordersSchemaIsInvalid(orders),
         surveyData: [],
+        error: ordersSchemaIsInvalid(orders),
       });
 
       return;
@@ -119,23 +126,34 @@ class App extends Component {
       surveyData: orders,
       error: null,
     });
+
+    await persistToDatabase(orders)
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  async componentDidMount() {
     try {
-      localStorage.foodState = JSON.stringify(this.state);
+    const  {survey_data } = (await axios.get('/api/survey-data/latest')).data;
+    this.setState({
+      surveyData: survey_data,
+      error: null,
+    });
+
     } catch (e) {
-      console.log('local storage not working');
+      console.log('Getting data from database panic!: ', e);
     }
+
   }
 
-  clearStorage = () => {
+  clearSurveyData = () => {
     if (
       window.confirm(
-        'Are you sure you want to delete the order information from your browser?',
+        'Are you sure you want to cleare these information and upload a new file?',
       )
     ) {
-      this.setState({ surveyData: [] });
+      this.setState({
+        surveyData: [],
+        error: null
+      });
     }
   };
 
@@ -144,9 +162,8 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <h1 className="App-title">Food Ordering</h1>
-          <a href="https://github.com/omidfi/food-ordering" className="fork-me">
-            {' '}Fork me on Github{' '}
-          </a>
+          <AdminSwitch />
+
         </header>
 
         <div className="content">
@@ -178,7 +195,7 @@ class App extends Component {
             <LatestOrderNotice
               surveyData={this.state.surveyData}
               quantity={R.path(['surveyData', 'length'], this.state)}
-              clear={this.clearStorage}
+              clear={this.clearSurveyData}
             />}
           <div className="file-uploader">
           {(!this.state.surveyData ||
@@ -213,6 +230,11 @@ class App extends Component {
           <div className="who-orderd-what">
             <WhoOrderedWhat surveyData={this.state.surveyData} />
           </div>
+        <footer className="footer">
+          <a href="https://github.com/omidfi/food-ordering" className="fork-me">
+            {' '}Fork me on Github{' '}
+          </a>
+        </footer>
         </div>
       </div>
     );
@@ -346,6 +368,12 @@ const Mailer = ({ surveyData = [] }) => {
   );
 };
 
+const AdminSwitch = () => {
+
+  return (<div></div>)
+
+}
+
 const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
   const latestOrder = getLatestOrder({ orders: surveyData });
   return (
@@ -355,7 +383,7 @@ const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
       {' and for '}
       {quantity} {'people'}
       <button onClick={clear} className="latest-order__button">
-        Clear orders
+        Upload New CSV file
       </button>
       <p>Note: data is only in your browser, it won't affect anyone else</p>
       <p>To upload a new order file, first clear the current orders. </p>
