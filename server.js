@@ -23,7 +23,7 @@ const path = require('path')
 
 // postgress
 const { Pool } = require('pg');
-const connectionString = process.env.DB_CONNECTION_STRING;
+const connectionString = process.env.DB_URL;
 const pool = new Pool({ connectionString });
 const query = (text, params) => pool.query(text, params);
 
