@@ -10,7 +10,7 @@ import {
   isEmpty,
   sortBy,
   prop,
-  compose
+  compose,
 } from 'ramda';
 import Joi from 'joi-browser';
 import axios from 'axios';
@@ -106,6 +106,9 @@ class App extends Component {
       error: null,
       adminView: false,
       loading: true,
+      dataSaveOk: false,
+      dataSaveFail: false,
+
     };
   }
 
@@ -156,12 +159,25 @@ class App extends Component {
       error: null,
     });
 
-    await persistToDatabase(orders);
+    try {
+      await persistToDatabase(orders);
+
+      this.setState({
+        dataSaveOk: true
+      });
+
+    } catch (error) {
+      this.setState({
+        dataSaveFail: true
+      });
+    }
   };
 
   async componentDidMount() {
     try {
-      const { survey_data } = (await axios.get('/api/survey-data/latest')).data;
+      const { survey_data } = (await axios.get('/api/survey-data/latest', {
+        timeout: 10000,
+      })).data;
       this.setState({
         surveyData: survey_data,
         error: null,
@@ -171,7 +187,7 @@ class App extends Component {
       console.log('Getting data from database panic!: ', e);
       this.setState({
         surveyData: [],
-        error: { error: { details: [e.message] } },
+        error: { details: [e.message], apiError: true },
         loading: false,
       });
     }
@@ -213,9 +229,11 @@ class App extends Component {
 
           <div className="content">
             {this.state.error && <ErrorContainer error={this.state.error} />}
+            {this.state.dataSaveOk && <div> Everything Saved Successfully</div>}
             {this.state.loading &&
               <div className="loading-holder">
-                <div className="loading" /><p className="loading-holder__p">Loading...</p>
+                <div className="loading" />
+                <p className="loading-holder__p">Loading...</p>
               </div>}
             {this.state.surveyData &&
               this.state.adminView &&
@@ -226,7 +244,8 @@ class App extends Component {
                 clear={this.clearSurveyData}
               />}
             <div className="file-uploader">
-              {((!this.state.surveyData || isEmpty(this.state.surveyData)) && !this.state.loading) &&
+              {(!this.state.surveyData || isEmpty(this.state.surveyData)) &&
+                !this.state.loading &&
                 <Dropzone
                   onDrop={this.onDrop}
                   disablePreview={true}
@@ -450,13 +469,25 @@ const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
   );
 };
 
-const ErrorContainer = error => {
-  if (!(error.error && error.error.details)) return null;
+const ErrorContainer = ({error}) => {
+  if (!(error && error.details)){
+    return null;
+  }
 
+  // something went wrong with the backend
+  if(error.apiError) {
+    return <div className="error-container">
+      <p className="error-container__p">
+        Can't connect to the database, however you still can upload your CSV file and prepare the orders for restaurants! <br /> The data won't get saved
+      </p>
+      </div>
+  }
+
+  // something is probably wrong in the csv file
   return (
-    error.error &&
-    error.error.details &&
-    error.error.details.map((errMessage, i) =>
+    error &&
+    error.details &&
+    error.details.map((errMessage, i) =>
       <div className="error-container" key={i}>
         <p className="error-container__p">
           <b>Problem with your uploaded .CSV file</b> Error:{' '}
