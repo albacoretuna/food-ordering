@@ -13,7 +13,7 @@ npm install
 
 # add DB_URL to the environment variables, it should be a valid postgress connection string
 
-npm start:prod
+npm start
 
 # point your browser to localhost:3000
 ```
