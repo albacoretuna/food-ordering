@@ -6,9 +6,14 @@ import axios from 'axios';
 
 // file uploader
 import Dropzone from 'react-dropzone';
+
+// styles
+import '../node_modules/css-toggle-switch/dist/toggle-switch.css';
 import './App.css';
 
 import { max, parse, format } from 'date-fns';
+
+// utility functions
 
 /*
  * input array of objects, containing orders
@@ -43,6 +48,7 @@ const ordersSchemaIsInvalid = orders => {
 
   return Joi.validate(orders, ordersSchema, { allowUnknown: true }).error;
 };
+
 // look at the orders and find the newest
 const getLatestOrder = ({ orders = [] }) =>
   max.apply(null, orders.map(order => parse(order.Timestamp)));
@@ -53,7 +59,7 @@ const groupByRestaurants = data => {
 };
 
 const persistToDatabase = data =>
-  axios.post('/api/survey-data/add', {surveyData: data})
+  axios.post('/api/survey-data/add', { surveyData: data });
 
 const groupByMeals = data => {
   const reducer = (acc, order) => {
@@ -71,12 +77,14 @@ const groupByMeals = data => {
   return R.map(countMeals, data);
 };
 
+// Our one and only App, the main react component in this application
 class App extends Component {
   constructor() {
     super();
-    this.state =  {
+    this.state = {
       surveyData: [],
-      error: null
+      error: null,
+      adminView: false,
     };
   }
 
@@ -107,7 +115,7 @@ class App extends Component {
     CSVParser.parse(files[0], CSVParserConfig);
   };
 
-  parseComplete = async (results) => {
+  parseComplete = async results => {
     const orders = results['data'];
 
     // clear previous orders
@@ -127,24 +135,23 @@ class App extends Component {
       error: null,
     });
 
-    await persistToDatabase(orders)
+    await persistToDatabase(orders);
   };
 
   async componentDidMount() {
     try {
-    const  {survey_data } = (await axios.get('/api/survey-data/latest')).data;
-    this.setState({
-      surveyData: survey_data,
-      error: null,
-    });
-
+      const { survey_data } = (await axios.get('/api/survey-data/latest')).data;
+      this.setState({
+        surveyData: survey_data,
+        error: null,
+      });
     } catch (e) {
       console.log('Getting data from database panic!: ', e);
     }
-
   }
 
   clearSurveyData = () => {
+    console.log('clear clicked');
     if (
       window.confirm(
         'Are you sure you want to cleare these information and upload a new file?',
@@ -152,94 +159,93 @@ class App extends Component {
     ) {
       this.setState({
         surveyData: [],
-        error: null
+        error: null,
       });
     }
   };
 
+  handleAdminSwitchChange = event => {
+    this.setState({
+      adminView: event.target.checked,
+    });
+  };
+
+  // let rendering begin!
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Food Ordering</h1>
-          <AdminSwitch />
+        <section className="wrapper">
+          <header className="App-header">
+            <h1 className="App-title">Food Ordering</h1>
+            <AdminSwitch
+              handleChange={this.handleAdminSwitchChange}
+              checked={this.state.adminView}
+            />
+          </header>
 
-        </header>
+          <div className="content">
+            {this.state.error && <ErrorContainer error={this.state.error} />}
+            {this.state.surveyData &&
+              this.state.adminView &&
+              !R.isEmpty(this.state.surveyData) &&
+              <LatestOrderNotice
+                surveyData={this.state.surveyData}
+                quantity={R.path(['surveyData', 'length'], this.state)}
+                clear={this.clearSurveyData}
+              />}
+            <div className="file-uploader">
+              {(!this.state.surveyData || R.isEmpty(this.state.surveyData)) &&
+                <Dropzone
+                  onDrop={this.onDrop}
+                  disablePreview={true}
+                  multiple={false}
+                  style={{
+                    display: 'flex',
+                    border: '5px dashed #00BCD4',
+                    width: '90%',
+                    maxWidth: '1200px',
+                    minHeight: '200px',
+                    justifyContent: 'center',
+                    background: 'rgba(0, 188, 212, 0.07)',
+                    margin: '10px auto',
+                    fontSize: '26px',
+                    lineHeight: '3',
+                  }}
+                >
+                  <p>
+                    Drop the orders .csv file here.
+                    <br /> Or click here to open a file browser
+                    <br /> <i> (The file that you got from google forms) </i>
+                  </p>
+                </Dropzone>}
+            </div>
+            {this.state.surveyData &&
+              this.state.adminView &&
+              <div className="mailer">
+                <Mailer surveyData={this.state.surveyData} />
+              </div>}
 
-        <div className="content">
-          <div className="error-container">
-            {this.state.error &&
-              this.state.error.details.map(errMessage =>
-                <p className="error-container__p">
-                  <b>Problem with your uploaded .CSV file</b> <br /> Error:{' '}
-                  {errMessage.message} <br />These might help: <br />{' '}
-                  <ul>
-                    {' '}<li>
-                      {' '}Make sure the Google form collects email addresses{' '}
-                    </li>
-                    <li>
-                      {' '}Check that the question for food is titled exactly
-                      as: meal{' '}
-                    </li>
-                    <li> Check that in every meal name, the restaurant name is tagged in brackets for example: [Fafa] </li>
-
-                    <li> Make sure you uploaded the correct CSV file </li>
-                    <li> Contact Omid :D </li>
-                    <li> Contact IT </li>
-                  </ul>
-                </p>,
-              )}
+            {this.state.surveyData &&
+              this.state.adminView &&
+              <div className="orders">
+                <RestaurantOrders surveyData={this.state.surveyData} />
+              </div>}
+            <div className="who-ordered-what">
+              <WhoOrderedWhat surveyData={this.state.surveyData} />
+            </div>
           </div>
-          {this.state.surveyData &&
-            !R.isEmpty(this.state.surveyData) &&
-            <LatestOrderNotice
-              surveyData={this.state.surveyData}
-              quantity={R.path(['surveyData', 'length'], this.state)}
-              clear={this.clearSurveyData}
-            />}
-          <div className="file-uploader">
-          {(!this.state.surveyData ||
-            R.isEmpty(this.state.surveyData)) &&
-            <Dropzone
-              onDrop={this.onDrop}
-              disablePreview={true}
-              multiple={false}
-              style={{
-                display: 'flex',
-                border: '5px dashed #00BCD4',
-                width: '90%',
-                maxWidth: '400px',
-                minHeight: '50px',
-                textAlign: 'center',
-                background: 'rgba(0, 188, 212, 0.07)',
-                margin: '10px auto',
-              }}
-            >
-              <p>
-                Drop the orders .csv file here, or click to open a file browser
-              </p>
-            </Dropzone>
-            }
-          </div>
-          <div className="mailer">
-            <Mailer surveyData={this.state.surveyData} />
-          </div>
-          <div className="orders">
-            <RestaurantOrders surveyData={this.state.surveyData} />
-          </div>
-          <div className="who-orderd-what">
-            <WhoOrderedWhat surveyData={this.state.surveyData} />
-          </div>
+        </section>
         <footer className="footer">
           <a href="https://github.com/omidfi/food-ordering" className="fork-me">
             {' '}Fork me on Github{' '}
           </a>
         </footer>
-        </div>
       </div>
     );
   }
 }
+
+// Stateless React components start here!
 
 const RestaurantOrders = ({ surveyData = [] }) => {
   const orders = groupByMeals(
@@ -279,21 +285,24 @@ const WhoOrderedWhat = ({ surveyData = [] }) => {
   const orders = surveyData.map(order => ({
     name: order['Email Address'].split('@')[0].replace(/\./g, ' '),
     meal: order.meal,
+    Timestamp: order.Timestamp,
   }));
   const sortByNameCaseInsensitive = R.sortBy(
     R.compose(R.toLower, R.prop('name')),
   );
   const sortedOrders = sortByNameCaseInsensitive(orders);
-  console.log(sortedOrders);
 
   return (
     <ol className="who-ordered-what__ol">
-      <p className="restaurant-orders__p">Who orderd what?</p>
+      <p className="restaurant-orders__p"><b> Who orderd what? </b></p>
       {sortedOrders &&
         sortedOrders.map((order, i) =>
-          <li key={i}>
+          <li className="who-ordered-what__li" key={i}>
             <span className="who-ordered-what__span"> {order.name}</span>{' '}
-            {order.meal}
+            {order.meal} {' '}
+            <i className="who-ordered-what__i">
+              Ordered on {format(order.Timestamp, 'MMM, Do YYYY')}
+            </i>
           </li>,
         )}
     </ol>
@@ -368,27 +377,67 @@ const Mailer = ({ surveyData = [] }) => {
   );
 };
 
-const AdminSwitch = () => {
+const AdminSwitch = ({ checked, handleChange }) => {
+  return (
+    <label className="switch-light switch-ios">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={event => {
+          handleChange(event);
+        }}
+      />
+      <strong>Admin View</strong>
 
-  return (<div></div>)
-
-}
+      <span>
+        <span />
+        <span role="img" aria-label="admin enabled">
+          💪
+        </span>
+        <a aria-hidden>""</a>
+      </span>
+    </label>
+  );
+};
 
 const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
   const latestOrder = getLatestOrder({ orders: surveyData });
   return (
     <div className="latest-order">
-      latest order in the system is from:{' '}
+      The latest person has ordered on: {' '}
       <b>{format(latestOrder, 'DD/MM/YYYY HH:mm')}</b>
-      {' and for '}
-      {quantity} {'people'}
+      <br />
+      {' Total: '}
+      <b>
+        {quantity} {' meals'}
+      </b>
       <button onClick={clear} className="latest-order__button">
         Upload New CSV file
       </button>
-      <p>Note: data is only in your browser, it won't affect anyone else</p>
-      <p>To upload a new order file, first clear the current orders. </p>
     </div>
   );
 };
+
+const ErrorContainer = error =>
+  error.error &&
+  error.error.details.map((errMessage, i) =>
+    <div className="error-container" key={i}>
+      <p className="error-container__p">
+        <b>Problem with your uploaded .CSV file</b> Error:{' '}
+      {errMessage.message} <br />These might help: <br />{' '}
+      </p>
+      <ul>
+        {' '}<li> Make sure the Google form collects email addresses </li>
+        <li> Check that the question for food is titled exactly as: meal </li>
+        <li>
+          {' '}Check that in every meal name, the restaurant name is tagged in
+          brackets for example: [Fafa]{' '}
+        </li>
+        <li> Make sure you uploaded the correct CSV file </li>
+        <li> Contact Omid :D </li>
+        <li> Contact IT </li>
+      </ul>
+    </div>,
+  );
 
 export default App;
