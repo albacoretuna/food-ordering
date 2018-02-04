@@ -1,16 +1,5 @@
 require('dotenv').config();
 
-/**
- orders table is like this, for now title, and archived are note used
- CREATE TABLE orders (
-   ID serial NOT NULL PRIMARY KEY,
-   title VARCHAR (100),
-   survey_data jsonb NOT NULL,
-   created_at timestamptz default now() not null,
-   archived boolean DEFAULT false
- );
- */
-
 // express
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -48,6 +37,17 @@ const ordersSchemaIsInvalid = ({ surveyData }) => {
     allowUnknown: true
   }).error;
 };
+
+/**
+ orders table is like this, for now title, and archived are note used
+ CREATE TABLE orders (
+   ID serial NOT NULL PRIMARY KEY,
+   title VARCHAR (100),
+   survey_data jsonb NOT NULL,
+   created_at timestamptz default now() not null,
+   archived boolean DEFAULT false
+ );
+ */
 
 app.post('/api/survey-data/add', async (req, res) => {
   const { surveyData } = req.body;
@@ -108,6 +108,6 @@ app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'build', 'index.html'));
 });
 
-const server = app.listen(8080, () => {
+const server = app.listen(8000, () => {
   console.log('server started on: ', server.address().port);
 });

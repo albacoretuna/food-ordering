@@ -3,7 +3,7 @@
   "version": "11.0.2",
   "description": "A web app for mass ordering food, using React, Express, ...",
   "private": false,
-  "proxy": "http://localhost:8080",
+  "proxy": "http://localhost:8000",
   "dependencies": {
     "axios": "0.17.1",
     "body-parser": "1.18.2",
