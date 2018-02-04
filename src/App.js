@@ -14,6 +14,8 @@ import {
 } from 'ramda';
 import Joi from 'joi-browser';
 import axios from 'axios';
+import Notifications, {notify} from 'react-notify-toast';
+
 
 // file uploader
 import Dropzone from 'react-dropzone';
@@ -106,9 +108,6 @@ class App extends Component {
       error: null,
       adminView: false,
       loading: true,
-      dataSaveOk: false,
-      dataSaveFail: false,
-
     };
   }
 
@@ -160,16 +159,13 @@ class App extends Component {
     });
 
     try {
+      this.setState({loading: true})
       await persistToDatabase(orders);
-
-      this.setState({
-        dataSaveOk: true
-      });
-
+      this.setState({loading: false})
+      notify.show('Orders saved successfully!', 'success', 10000);
     } catch (error) {
-      this.setState({
-        dataSaveFail: true
-      });
+      notify.show('Failed to save the orders :( ', 'error', 10000);
+      this.setState({loading: false})
     }
   };
 
@@ -228,8 +224,8 @@ class App extends Component {
           </header>
 
           <div className="content">
+            <Notifications />
             {this.state.error && <ErrorContainer error={this.state.error} />}
-            {this.state.dataSaveOk && <div> Everything Saved Successfully</div>}
             {this.state.loading &&
               <div className="loading-holder">
                 <div className="loading" />
