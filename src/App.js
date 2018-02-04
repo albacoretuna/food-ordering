@@ -36,6 +36,11 @@ const extractRestaurantNames = surveyData => {
   });
 };
 
+/**
+ * ordersSchemaIsInvalid
+ *
+ * @returns {null} or an {object} containing validation error details
+ */
 const ordersSchemaIsInvalid = orders => {
   const restaurantNamePattern = /\[.+\]/;
   const ordersSchema = Joi.array().items(
@@ -49,7 +54,11 @@ const ordersSchemaIsInvalid = orders => {
   return Joi.validate(orders, ordersSchema, { allowUnknown: true }).error;
 };
 
-// look at the orders and find the newest
+/**
+ * getLatestOrder
+ * Which order is the newest?
+ * @returns {Date}
+ */
 const getLatestOrder = ({ orders = [] }) =>
   max.apply(null, orders.map(order => parse(order.Timestamp)));
 
@@ -57,9 +66,6 @@ const groupByRestaurants = data => {
   const byRestaurant = R.groupBy(order => order.restaurant);
   return byRestaurant(data);
 };
-
-const persistToDatabase = data =>
-  axios.post('/api/survey-data/add', { surveyData: data });
 
 const groupByMeals = data => {
   const reducer = (acc, order) => {
@@ -77,6 +83,9 @@ const groupByMeals = data => {
   return R.map(countMeals, data);
 };
 
+const persistToDatabase = data =>
+  axios.post('/api/survey-data/add', { surveyData: data });
+
 // Our one and only App, the main react component in this application
 class App extends Component {
   constructor() {
@@ -85,6 +94,7 @@ class App extends Component {
       surveyData: [],
       error: null,
       adminView: false,
+      loading: false,
     };
   }
 
@@ -144,9 +154,15 @@ class App extends Component {
       this.setState({
         surveyData: survey_data,
         error: null,
+        loading: false,
       });
     } catch (e) {
       console.log('Getting data from database panic!: ', e);
+      this.setState({
+        surveyData: [],
+        error: { error: { details: [e.message] } },
+        loading: false,
+      });
     }
   }
 
@@ -160,6 +176,7 @@ class App extends Component {
       this.setState({
         surveyData: [],
         error: null,
+        loading: false,
       });
     }
   };
@@ -185,6 +202,10 @@ class App extends Component {
 
           <div className="content">
             {this.state.error && <ErrorContainer error={this.state.error} />}
+            {this.state.loading &&
+              <div class="loading-holder">
+                <div className="loading" />Loading...
+              </div>}
             {this.state.surveyData &&
               this.state.adminView &&
               !R.isEmpty(this.state.surveyData) &&
@@ -294,7 +315,9 @@ const WhoOrderedWhat = ({ surveyData = [] }) => {
 
   return (
     <ol className="who-ordered-what__ol">
-      <p className="restaurant-orders__p"><b> Who orderd what? </b></p>
+      <p className="restaurant-orders__p">
+        <b> Who orderd what? </b>
+      </p>
       {sortedOrders &&
         sortedOrders.map((order, i) =>
           <li className="who-ordered-what__li" key={i}>
@@ -420,11 +443,12 @@ const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
 
 const ErrorContainer = error =>
   error.error &&
+  error.error.details &&
   error.error.details.map((errMessage, i) =>
     <div className="error-container" key={i}>
       <p className="error-container__p">
-        <b>Problem with your uploaded .CSV file</b> Error:{' '}
-      {errMessage.message} <br />These might help: <br />{' '}
+        <b>Problem with your uploaded .CSV file</b> Error: {errMessage.message}{' '}
+        <br />These might help: <br />{' '}
       </p>
       <ul>
         {' '}<li> Make sure the Google form collects email addresses </li>
