@@ -14,8 +14,7 @@ import {
 } from 'ramda';
 import Joi from 'joi-browser';
 import axios from 'axios';
-import Notifications, {notify} from 'react-notify-toast';
-
+import Notifications, { notify } from 'react-notify-toast';
 
 // file uploader
 import Dropzone from 'react-dropzone';
@@ -34,7 +33,6 @@ import { max, parse, format } from 'date-fns';
  */
 const extractRestaurantNames = surveyData => {
   const restaurantNamePattern = /\[.+\]/;
-
   return surveyData.map(order => {
     if (!order.meal) return '';
     return {
@@ -159,13 +157,13 @@ class App extends Component {
     });
 
     try {
-      this.setState({loading: true})
+      this.setState({ loading: true });
       await persistToDatabase(orders);
-      this.setState({loading: false})
+      this.setState({ loading: false });
       notify.show('Orders saved successfully!', 'success', 10000);
     } catch (error) {
       notify.show('Failed to save the orders :( ', 'error', 10000);
-      this.setState({loading: false})
+      this.setState({ loading: false });
     }
   };
 
@@ -465,18 +463,22 @@ const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
   );
 };
 
-const ErrorContainer = ({error}) => {
-  if (!(error && error.details)){
+const ErrorContainer = ({ error }) => {
+  if (!(error && error.details)) {
     return null;
   }
 
   // something went wrong with the backend
-  if(error.apiError) {
-    return <div className="error-container">
-      <p className="error-container__p">
-        Can't connect to the database, however you still can upload your CSV file and prepare the orders for restaurants! <br /> The data won't get saved
-      </p>
+  if (error.apiError) {
+    return (
+      <div className="error-container">
+        <p className="error-container__p">
+          Can't connect to the database, however you still can upload your CSV
+          file and prepare the orders for restaurants! <br /> The data won't get
+          saved
+        </p>
       </div>
+    );
   }
 
   // something is probably wrong in the csv file
