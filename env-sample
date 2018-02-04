@@ -1,0 +1,1 @@
+DB_CONNECTION_STRING=postgresql://user:password@your-db-host.rds.amazonaws.com/db-name
