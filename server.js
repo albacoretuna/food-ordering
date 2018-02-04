@@ -19,6 +19,8 @@ const app = express();
 const router = new Router();
 app.use(bodyParser.json());
 
+const path = require('path')
+
 // postgress
 const { Pool } = require('pg');
 const connectionString = process.env.DB_CONNECTION_STRING;
@@ -50,7 +52,7 @@ const ordersSchemaIsInvalid = ({ surveyData }) => {
 app.post('/api/survey-data/add', async (req, res) => {
   const { surveyData } = req.body;
   const validationError = ordersSchemaIsInvalid({surveyData});
-  if (validationError) {
+  if (!surveyData || validationError) {
     res.status(400).send(validationError);
   }
   try {
@@ -96,6 +98,14 @@ app.get('/api/survey-data/:id', async (req, res) => {
   } catch (e) {
     res.status(500).send(e);
   }
+});
+
+
+app.use(express.static(path.resolve(__dirname, 'build')));
+
+// Always return the main index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'build', 'index.html'));
 });
 
 const server = app.listen(8080, () => {
