@@ -24,7 +24,7 @@ const groupByRestaurants = data => {
 const sendEmails = ({ meals, restaurant }) => {
   const timeout = 2000;
 
-  const mailtoPrefix = `mailto:?subject=${restaurant} arrived, your food is here&body=Hello, \n Please find your selected futufriday food at the kitchen. \n Regards, FutuFriday Team&bcc=`;
+  const mailtoPrefix = `mailto:?subject=Your food from ${restaurant} arrived!&body=Hi,\n Please find your selected meal at the kitchen. See food.play.futurice.com to remember what you ordered. \n Hugs, FutuFriday Team\n[PaydayPizza]&bcc=`;
 
   const maxUrlCharacters = 1900;
   const separator = ';';
