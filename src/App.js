@@ -188,7 +188,6 @@ class App extends Component {
   }
 
   clearSurveyData = () => {
-    console.log('clear clicked');
     if (
       window.confirm(
         'Are you sure you want to cleare these information and upload a new file?',
@@ -212,16 +211,11 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <section className="wrapper">
-          <header className="App-header">
-            <h1 className="App-title">Food Ordering</h1>
-            <AdminSwitch
-              handleChange={this.handleAdminSwitchChange}
-              checked={this.state.adminView}
-            />
-          </header>
+        <Wrapper >
+            <Header  >
+              <AdminSwitch handleChange={this.handleAdminSwitchChange} />
 
-          <div className="content">
+          </Header>
             <Notifications />
             {this.state.error && <ErrorContainer error={this.state.error} />}
             {this.state.loading &&
@@ -237,54 +231,20 @@ class App extends Component {
                 quantity={path(['surveyData', 'length'], this.state)}
                 clear={this.clearSurveyData}
               />}
-            <div className="file-uploader">
-              {(!this.state.surveyData || isEmpty(this.state.surveyData)) &&
-                !this.state.loading &&
-                <Dropzone
-                  onDrop={this.onDrop}
-                  disablePreview={true}
-                  multiple={false}
-                  style={{
-                    display: 'flex',
-                    border: '5px dashed #00BCD4',
-                    width: '90%',
-                    maxWidth: '1200px',
-                    minHeight: '200px',
-                    justifyContent: 'center',
-                    background: 'rgba(0, 188, 212, 0.07)',
-                    margin: '10px auto',
-                    fontSize: '26px',
-                    lineHeight: '3',
-                  }}
-                >
-                  <p>
-                    Drop the orders .csv file here.
-                    <br /> Or click here to open a file browser
-                    <br /> <i> (The file that you got from google forms) </i>
-                  </p>
-                </Dropzone>}
-            </div>
-            {this.state.surveyData &&
-              this.state.adminView &&
-              <div className="mailer">
-                <Mailer surveyData={this.state.surveyData} />
-              </div>}
+          {(!this.state.surveyData || isEmpty(this.state.surveyData)) &&
+            !this.state.loading &&
+            <FileUploader onDrop={this.onDrop} />}
 
-            {this.state.surveyData &&
-              this.state.adminView &&
-              <div className="orders">
-                <RestaurantOrders surveyData={this.state.surveyData} />
-              </div>}
-            <div className="who-ordered-what">
-              <WhoOrderedWhat surveyData={this.state.surveyData} />
-            </div>
-          </div>
-        </section>
-        <footer className="footer">
-          <a href="https://github.com/omidfi/food-ordering" className="fork-me">
-            {' '}Fork me on Github{' '}
-          </a>
-        </footer>
+          {this.state.surveyData &&
+            this.state.adminView &&
+            <Mailer surveyData={this.state.surveyData} />}
+
+          {this.state.surveyData &&
+            this.state.adminView &&
+            <RestaurantOrders surveyData={this.state.surveyData} />}
+          <WhoOrderedWhat surveyData={this.state.surveyData} />
+        </Wrapper>
+        <Footer />
       </div>
     );
   }
@@ -336,21 +296,23 @@ const WhoOrderedWhat = ({ surveyData = [] }) => {
   const sortedOrders = sortByNameCaseInsensitive(orders);
 
   return (
-    <ol className="who-ordered-what__ol">
-      <p className="restaurant-orders__p">
-        <b> Who orderd what? </b>
-      </p>
-      {sortedOrders &&
-        sortedOrders.map((order, i) =>
-          <li className="who-ordered-what__li" key={i}>
-            <span className="who-ordered-what__span"> {order.name}</span>{' '}
-            {order.meal} {' '}
-            <i className="who-ordered-what__i">
-              Ordered on {format(order.Timestamp, 'MMM, Do YYYY')}
-            </i>
-          </li>,
-        )}
-    </ol>
+    <div className="who-ordered-what">
+      <ol className="who-ordered-what__ol">
+        <p className="restaurant-orders__p">
+          <b> Who orderd what? </b>
+        </p>
+        {sortedOrders &&
+          sortedOrders.map((order, i) =>
+            <li className="who-ordered-what__li" key={i}>
+              <span className="who-ordered-what__span"> {order.name}</span>{' '}
+              {order.meal} {' '}
+              <i className="who-ordered-what__i">
+                Ordered on {format(order.Timestamp, 'MMM, Do YYYY')}
+              </i>
+            </li>,
+          )}
+      </ol>
+    </div>
   );
 };
 
@@ -396,38 +358,39 @@ const Mailer = ({ surveyData = [] }) => {
 
   if (isEmpty(meals)) return <div />;
   return (
-    <div className="mailer__div">
-      {meals &&
-        <p className="mailer__p">
-          Press each button to send an email to the ones who have ordered from
-          that restaurant. (opens your email client)
-        </p>}
-      <div className="mailer__wrapper">
+    <div className="mailer">
+      <div className="mailer__div">
         {meals &&
-          Object.keys(meals).map((restaurant, i) =>
-            <div key={i}>
-              <a
-                onClick={() => sendEmails({ meals, restaurant })}
-                className="mail-link"
-              >
-                <b className="restaurant-name">
-                  {restaurant.replace('[', '').replace(']', '')}
-                </b>{' '}
-                Arrived!
-              </a>
-            </div>,
-          )}
+          <p className="mailer__p">
+            Press each button to send an email to the ones who have ordered from
+            that restaurant. (opens your email client)
+          </p>}
+        <div className="mailer__wrapper">
+          {meals &&
+            Object.keys(meals).map((restaurant, i) =>
+              <div key={i}>
+                <a
+                  onClick={() => sendEmails({ meals, restaurant })}
+                  className="mail-link"
+                >
+                  <b className="restaurant-name">
+                    {restaurant.replace('[', '').replace(']', '')}
+                  </b>{' '}
+                  Arrived!
+                </a>
+              </div>,
+            )}
+        </div>
       </div>
     </div>
   );
 };
 
-const AdminSwitch = ({ checked, handleChange }) => {
+const AdminSwitch = ({ handleChange }) => {
   return (
     <label className="switch-light switch-ios">
       <input
         type="checkbox"
-        checked={checked}
         onChange={event => {
           handleChange(event);
         }}
@@ -506,5 +469,46 @@ const ErrorContainer = ({ error }) => {
     )
   );
 };
+
+const FileUploader = ({ onDrop }) =>
+  <div className="file-uploader">
+    <Dropzone
+      onDrop={onDrop}
+      disablePreview={true}
+      multiple={false}
+      style={{
+        display: 'flex',
+        border: '5px dashed #00BCD4',
+        width: '90%',
+        maxWidth: '1200px',
+        minHeight: '200px',
+        justifyContent: 'center',
+        background: 'rgba(0, 188, 212, 0.07)',
+        margin: '10px auto',
+        fontSize: '26px',
+        lineHeight: '3',
+      }}
+    >
+      <p>
+        Drop the orders .csv file here.
+        <br /> Or click here to open a file browser
+        <br /> <i> (The file that you got from google forms) </i>
+      </p>
+    </Dropzone>
+  </div>;
+
+const Footer = () =>  <footer className="footer">
+          <a href="https://github.com/omidfi/food-ordering" className="fork-me">
+            {' '}Fork me on Github{' '}
+          </a>
+        </footer>
+const Header = ({children}) => <header className="App-header">
+            <h1 className="App-title">Food Ordering</h1>
+            {children}
+          </header>
+
+const Wrapper = ({children}) => <section className="wrapper">
+  {children}
+</section>
 
 export default App;
