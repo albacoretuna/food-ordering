@@ -1,15 +1,5 @@
 import React from 'react';
-import {
-  trim,
-  match,
-  map,
-  toLower,
-  groupBy,
-  isEmpty,
-  sortBy,
-  prop,
-  compose,
-} from 'ramda';
+import { trim, match, map, toLower, groupBy, isEmpty } from 'ramda';
 
 import { max, parse, format } from 'date-fns';
 // file uploader
@@ -134,23 +124,45 @@ export const RestaurantOrders = ({ surveyData = [] }) => {
 };
 
 // who ordered what
-export const WhoOrderedWhat = ({ surveyData = [] }) => {
-  const orders = surveyData.map(order => ({
-    name: order['Email Address'].split('@')[0].replace(/\./g, ' '),
-    meal: order.meal,
-    Timestamp: order.Timestamp,
-  }));
-  const sortByNameCaseInsensitive = sortBy(compose(toLower, prop('name')));
-  const sortedOrders = sortByNameCaseInsensitive(orders);
+export const WhoOrderedWhat = ({
+  surveyData = [],
+  searchTerm = '',
+  handleSearchTermChange,
+}) => {
+  const orders = surveyData
+    .map(order => ({
+      name: order['Email Address'].split('@')[0].replace(/\./g, ' '),
+      meal: order.meal,
+      Timestamp: order.Timestamp,
+    }))
+    // sort alphabetically
+    .sort((a, b) => a.name.localeCompare(b.name))
+    // filter out by name
+    .filter(order => toLower(order.name).match(toLower(searchTerm)));
 
   return (
     <div className="who-ordered-what">
       <ol className="who-ordered-what__ol">
         <p className="restaurant-orders__p">
-          <b> Who order what? </b>
+          <b> Who ordered what? </b>
         </p>
-        {sortedOrders &&
-          sortedOrders.map((order, i) =>
+        <div className="search">
+          <label htmlFor="searchInput" className="search__label">
+            Filter by name:
+            <input
+              className="search__input"
+              id="searchInput"
+              type="text"
+              placeholder="example: rosa parks"
+              value={searchTerm}
+              onChange={event => {
+                handleSearchTermChange(event.target.value);
+              }}
+            />
+          </label>
+        </div>
+        {orders &&
+          orders.map((order, i) =>
             <li className="who-ordered-what__li" key={i}>
               <span className="who-ordered-what__span"> {order.name}</span>{' '}
               {order.meal} {' '}

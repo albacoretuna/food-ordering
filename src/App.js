@@ -56,6 +56,7 @@ class App extends Component {
       error: null,
       adminView: false,
       loading: true,
+      searchTerm: '',
     };
   }
 
@@ -155,11 +156,18 @@ class App extends Component {
     }
   };
 
+  handleSearchTermChange = (value) => {
+    this.setState({
+      searchTerm: value,
+    });
+  };
+
   handleAdminSwitchChange = event => {
     this.setState({
       adminView: event.target.checked,
     });
   };
+
 
   // let rendering begin!
   render() {
@@ -195,7 +203,12 @@ class App extends Component {
           {this.state.surveyData &&
             this.state.adminView &&
             <RestaurantOrders surveyData={this.state.surveyData} />}
-          <WhoOrderedWhat surveyData={this.state.surveyData} />
+          {this.state.surveyData &&
+          <WhoOrderedWhat
+            surveyData={this.state.surveyData}
+            searchTerm={this.state.searchTerm}
+            handleSearchTermChange={this.handleSearchTermChange}
+          />}
         </Wrapper>
         <Footer />
       </div>
