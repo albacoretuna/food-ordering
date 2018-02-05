@@ -147,7 +147,7 @@ export const WhoOrderedWhat = ({ surveyData = [] }) => {
     <div className="who-ordered-what">
       <ol className="who-ordered-what__ol">
         <p className="restaurant-orders__p">
-          <b> Who orderd what? </b>
+          <b> Who order what? </b>
         </p>
         {sortedOrders &&
           sortedOrders.map((order, i) =>
