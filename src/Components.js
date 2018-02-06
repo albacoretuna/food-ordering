@@ -1,7 +1,7 @@
 import React from 'react';
 import { trim, match, map, toLower, groupBy, isEmpty } from 'ramda';
 
-import { max, parse, format } from 'date-fns';
+import { max, parse, format, differenceInDays } from 'date-fns';
 // file uploader
 import Dropzone from 'react-dropzone';
 
@@ -233,8 +233,20 @@ export const AdminSwitch = ({ handleChange }) => {
 
 export const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
   const latestOrder = getLatestOrder({ orders: surveyData });
+
+  // check if the order is too old
+  let orderIsTwoWeeksOld = false;
+  if (differenceInDays(Date.now(), latestOrder) > 14) {
+    orderIsTwoWeeksOld = true;
+  }
+
   return (
     <div className="latest-order">
+      {orderIsTwoWeeksOld &&
+        <h2>
+          The order seems to be old, make sure you haven't uploaded a wrong file
+          :){' '}
+        </h2>}
       The latest person has ordered on: {' '}
       <b>{format(latestOrder, 'DD/MM/YYYY HH:mm')}</b>
       <br />
