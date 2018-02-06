@@ -168,7 +168,6 @@ class App extends Component {
     });
   };
 
-
   // let rendering begin!
   render() {
     return (
@@ -205,6 +204,7 @@ class App extends Component {
             <RestaurantOrders surveyData={this.state.surveyData} />}
           {this.state.surveyData &&
           !isEmpty(this.state.surveyData) &&
+          !this.state.adminView &&
           <WhoOrderedWhat
             surveyData={this.state.surveyData}
             searchTerm={this.state.searchTerm}

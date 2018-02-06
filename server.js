@@ -8,7 +8,7 @@ const app = express();
 const router = new Router();
 app.use(bodyParser.json());
 
-const path = require('path')
+const path = require('path');
 
 // postgress
 const { Pool } = require('pg');
@@ -34,7 +34,7 @@ const ordersSchemaIsInvalid = ({ surveyData }) => {
   const ordersSchema = Joi.array().items(orderSchema);
 
   return Joi.validate(surveyData, ordersSchema, {
-    allowUnknown: true
+    allowUnknown: true,
   }).error;
 };
 
@@ -51,7 +51,7 @@ const ordersSchemaIsInvalid = ({ surveyData }) => {
 
 app.post('/api/survey-data/add', async (req, res) => {
   const { surveyData } = req.body;
-  const validationError = ordersSchemaIsInvalid({surveyData});
+  const validationError = ordersSchemaIsInvalid({ surveyData });
   if (!surveyData || validationError) {
     res.status(400).send(validationError);
   }
@@ -99,7 +99,6 @@ app.get('/api/survey-data/:id', async (req, res) => {
     res.status(500).send(e);
   }
 });
-
 
 app.use(express.static(path.resolve(__dirname, 'build')));
 
