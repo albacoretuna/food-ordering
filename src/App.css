@@ -255,6 +255,9 @@
 .search__input {
   width: 100%;
   margin: 5px 0;
-  border: 1px solid blue;
+  border: 1px solid lightblue;
   padding: 5px;
+  font-size: 20px;
+  line-height: 2.3;
+  padding-bottom: 0;
 }

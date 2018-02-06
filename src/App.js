@@ -204,6 +204,7 @@ class App extends Component {
             this.state.adminView &&
             <RestaurantOrders surveyData={this.state.surveyData} />}
           {this.state.surveyData &&
+          !isEmpty(this.state.surveyData) &&
           <WhoOrderedWhat
             surveyData={this.state.surveyData}
             searchTerm={this.state.searchTerm}

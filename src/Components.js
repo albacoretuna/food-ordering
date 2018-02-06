@@ -153,7 +153,7 @@ export const WhoOrderedWhat = ({
               className="search__input"
               id="searchInput"
               type="text"
-              placeholder="example: rosa parks"
+              placeholder="&#128270; example: rosa parks"
               value={searchTerm}
               onChange={event => {
                 handleSearchTermChange(event.target.value);
