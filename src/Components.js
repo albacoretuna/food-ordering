@@ -135,10 +135,10 @@ export const WhoOrderedWhat = ({
       meal: order.meal,
       Timestamp: order.Timestamp,
     }))
-    // sort alphabetically
-    .sort((a, b) => a.name.localeCompare(b.name))
     // filter out by name
-    .filter(order => toLower(order.name).match(toLower(searchTerm)));
+    .filter(order => toLower(order.name).match(toLower(searchTerm)))
+    // sort alphabetically
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <div className="who-ordered-what">
