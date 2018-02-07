@@ -64,6 +64,10 @@
   font-size: 14px;
 }
 
+.latest-order__i {
+  color: #444;
+}
+
 .restaurant-orders {
   max-width: 1200px;
   margin: 10px auto 50px;

@@ -233,22 +233,17 @@ export const AdminSwitch = ({ handleChange }) => {
 
 export const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
   const latestOrder = getLatestOrder({ orders: surveyData });
-
-  // check if the order is too old
-  let orderIsTwoWeeksOld = false;
-  if (differenceInDays(Date.now(), latestOrder) > 14) {
-    orderIsTwoWeeksOld = true;
-  }
+  const ordersAgeInDays = differenceInDays(Date.now(), latestOrder);
 
   return (
     <div className="latest-order">
-      {orderIsTwoWeeksOld &&
+      { (ordersAgeInDays >= 14) &&
         <h2>
-          The order seems to be old, make sure you haven't uploaded a wrong file
+          The order seems to be ${ordersAgeInDays} days old, make sure you haven't uploaded a wrong file
           :){' '}
         </h2>}
-      The latest person has ordered on: {' '}
-      <b>{format(latestOrder, 'DD/MM/YYYY HH:mm')}</b>
+        The orders are from <b>{ordersAgeInDays} days ago</b>
+        {' '}<i className="latest-order__i">({format(latestOrder, 'DD.MM.YYYY')})</i>
       <br />
       {' Total: '}
       <b>
