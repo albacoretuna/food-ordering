@@ -98,6 +98,9 @@
   margin: 10px 10px;
 }
 
+.restaurant-orders__li {
+  list-style-type: none;
+}
 .mailer {
   padding-top: 10px;
   text-align: center;

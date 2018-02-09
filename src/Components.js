@@ -112,8 +112,8 @@ export const RestaurantOrders = ({ surveyData = [] }) => {
             </span>
             <ul>
               {Object.keys(orders[restaurant]).map((food, i) =>
-                <li key={i}>
-                  <b> {orders[restaurant][food]} </b> X {food}
+                <li key={i} className="restaurant-orders__li">
+                  <b> {orders[restaurant][food]} {' '} kpl </b> {' '} {food}
                 </li>,
               )}{' '}
             </ul>
