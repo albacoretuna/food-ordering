@@ -45,7 +45,8 @@ const ordersSchemaIsInvalid = ({ surveyData }) => {
    title VARCHAR (100),
    survey_data jsonb NOT NULL,
    created_at timestamptz default now() not null,
-   archived boolean DEFAULT false
+   archived boolean DEFAULT false,
+   username VARCHAR
  );
  */
 

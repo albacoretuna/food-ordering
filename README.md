@@ -37,3 +37,6 @@ My colleague orders around 200 meals for us on a single day, every month. This i
 
 nodejs, npm, postgress
 
+
+## Credits
+All the SVG clip arts from openclipart.org

@@ -23,6 +23,7 @@ import {
   FileUploader,
   Mailer,
   RestaurantOrders,
+  OrderListEmpty,
 } from './Components';
 
 // utility functions
@@ -57,6 +58,7 @@ class App extends Component {
       adminView: false,
       loading: true,
       searchTerm: '',
+      showGame: false
     };
   }
 
@@ -173,6 +175,10 @@ class App extends Component {
     });
   };
 
+  activateGame = () => {
+    this.setState({showGame: true})
+  }
+
   // let rendering begin!
   render() {
     return (
@@ -197,7 +203,7 @@ class App extends Component {
               clear={this.clearSurveyData}
             />}
           {(!this.state.surveyData || isEmpty(this.state.surveyData)) &&
-            this.state.adminView&&
+            this.state.adminView &&
             !this.state.loading &&
             <FileUploader onDrop={this.onDrop} />}
 
@@ -216,6 +222,11 @@ class App extends Component {
               searchTerm={this.state.searchTerm}
               handleSearchTermChange={this.handleSearchTermChange}
             />}
+
+          {this.state.surveyData &&
+            isEmpty(this.state.surveyData) &&
+            !this.state.adminView &&
+            <OrderListEmpty showGame={this.state.showGame} activateGame={this.activateGame}/>}
         </Wrapper>
         <Footer />
       </div>
