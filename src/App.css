@@ -55,13 +55,14 @@
 .latest-order__button {
   margin: 10px auto;
   display: block;
-  background: #3f51b5;
+  background: #d72719;
   color: white;
   border: none;
   min-height: 40px;
   padding: 10px 30px;
   cursor: pointer;
   font-size: 14px;
+  font-weight:600;
 }
 
 .latest-order__i {

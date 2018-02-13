@@ -250,7 +250,7 @@ export const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
         {quantity} {' meals'}
       </b>
       <button onClick={clear} className="latest-order__button">
-        Upload New CSV file
+        Remove All Orders
       </button>
     </div>
   );

@@ -142,21 +142,26 @@ class App extends Component {
     await this.loadSurveyData();
   }
 
-  clearSurveyData = () => {
-    if (
-      window.confirm(
-        'Are you sure you want to cleare these information and upload a new file?',
-      )
-    ) {
+  clearSurveyData = async () => {
+    if (window.confirm('Are you sure you want to cleare these information?')) {
       this.setState({
         surveyData: [],
         error: null,
         loading: false,
       });
+      try {
+        this.setState({ loading: true });
+        await persistToDatabase([]);
+        this.setState({ loading: false });
+        notify.show('Orders removed successfully!', 'success', 5000);
+      } catch (error) {
+        notify.show('Failed to clear the orders :( ', 'error', 10000);
+        this.setState({ loading: false });
+      }
     }
   };
 
-  handleSearchTermChange = (value) => {
+  handleSearchTermChange = value => {
     this.setState({
       searchTerm: value,
     });
@@ -192,6 +197,7 @@ class App extends Component {
               clear={this.clearSurveyData}
             />}
           {(!this.state.surveyData || isEmpty(this.state.surveyData)) &&
+            this.state.adminView&&
             !this.state.loading &&
             <FileUploader onDrop={this.onDrop} />}
 
@@ -203,13 +209,13 @@ class App extends Component {
             this.state.adminView &&
             <RestaurantOrders surveyData={this.state.surveyData} />}
           {this.state.surveyData &&
-          !isEmpty(this.state.surveyData) &&
-          !this.state.adminView &&
-          <WhoOrderedWhat
-            surveyData={this.state.surveyData}
-            searchTerm={this.state.searchTerm}
-            handleSearchTermChange={this.handleSearchTermChange}
-          />}
+            !isEmpty(this.state.surveyData) &&
+            !this.state.adminView &&
+            <WhoOrderedWhat
+              surveyData={this.state.surveyData}
+              searchTerm={this.state.searchTerm}
+              handleSearchTermChange={this.handleSearchTermChange}
+            />}
         </Wrapper>
         <Footer />
       </div>

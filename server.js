@@ -51,6 +51,7 @@ const ordersSchemaIsInvalid = ({ surveyData }) => {
 
 app.post('/api/survey-data/add', async (req, res) => {
   const { surveyData } = req.body;
+  const user =  req.headers["remote-user"] || 'unknown';
   const validationError = ordersSchemaIsInvalid({ surveyData });
   if (!surveyData || validationError) {
     res.status(400).send(validationError);
@@ -59,8 +60,8 @@ app.post('/api/survey-data/add', async (req, res) => {
     const {
       rows,
     } = await query(
-      'INSERT INTO orders (survey_data) VALUES ($1) RETURNING id',
-      [JSON.stringify(surveyData)],
+      'INSERT INTO orders (survey_data, username) VALUES ($1, $2) RETURNING id',
+      [JSON.stringify(surveyData), user],
     );
     res.send(rows[0]);
   } catch (e) {
