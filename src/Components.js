@@ -1,9 +1,15 @@
 import React from 'react';
 import { trim, match, map, toLower, groupBy, isEmpty } from 'ramda';
-
 import { max, parse, format, differenceInDays } from 'date-fns';
+
+// images
+import CoupleSvg from './img/couple.svg';
+
 // file uploader
 import Dropzone from 'react-dropzone';
+
+// components
+import Game from './Game.js'
 
 const groupByRestaurants = data => {
   const byRestaurant = groupBy(order => order.restaurant);
@@ -113,7 +119,7 @@ export const RestaurantOrders = ({ surveyData = [] }) => {
             <ul>
               {Object.keys(orders[restaurant]).map((food, i) =>
                 <li key={i} className="restaurant-orders__li">
-                  <b> {orders[restaurant][food]} {' '} kpl </b> {' '} {food}
+                  <b> {orders[restaurant][food]} kpl </b> {food}
                 </li>,
               )}{' '}
             </ul>
@@ -237,13 +243,13 @@ export const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
 
   return (
     <div className="latest-order">
-      { (ordersAgeInDays >= 14) &&
+      {ordersAgeInDays >= 14 &&
         <h2>
-          The order seems to be ${ordersAgeInDays} days old, make sure you haven't uploaded a wrong file
-          :){' '}
+          The order seems to be ${ordersAgeInDays} days old, make sure you
+          haven't uploaded a wrong file :){' '}
         </h2>}
-        The orders are from <b>{ordersAgeInDays} days ago</b>
-        {' '}<i className="latest-order__i">({format(latestOrder, 'DD.MM.YYYY')})</i>
+      The orders are from <b>{ordersAgeInDays} days ago</b>{' '}
+      <i className="latest-order__i">({format(latestOrder, 'DD.MM.YYYY')})</i>
       <br />
       {' Total: '}
       <b>
@@ -309,14 +315,16 @@ export const FileUploader = ({ onDrop }) =>
       style={{
         display: 'flex',
         border: '5px dashed #00BCD4',
-        width: '90%',
+        width: '99%',
         maxWidth: '1200px',
         minHeight: '200px',
         justifyContent: 'center',
+        textAlign: 'center',
         background: 'rgba(0, 188, 212, 0.07)',
         margin: '10px auto',
-        fontSize: '26px',
-        lineHeight: '3',
+        fontSize: '22px',
+        lineHeight: '2',
+        padding: '10px',
       }}
     >
       <p>
@@ -344,3 +352,16 @@ export const Wrapper = ({ children }) =>
   <section className="wrapper">
     {children}
   </section>;
+
+export const OrderListEmpty = ({showGame, activateGame}) =>
+  <div className="empty-order-list">
+    <p>No orders here yet. Check back later. </p>
+    {!showGame && <button className="empty-order-list__button" onClick={() => {activateGame()}}>Or Play a game</button>}
+    <img
+      alt="no orders available"
+      className="empty-order-list__img"
+      src={CoupleSvg}
+    />
+    {showGame && <Game />}
+  </div>;
+

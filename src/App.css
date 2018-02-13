@@ -62,7 +62,7 @@
   padding: 10px 30px;
   cursor: pointer;
   font-size: 14px;
-  font-weight:600;
+  font-weight: 600;
 }
 
 .latest-order__i {
@@ -246,14 +246,6 @@
   width: 100px;
 }
 
-@keyframes spin {
-  to {
-    border-top-color: #ec407a;
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-
 .search__label {
   margin: 0 5px;
   display: block;
@@ -268,4 +260,113 @@
   font-size: 20px;
   line-height: 2.3;
   padding-bottom: 0;
+}
+
+.empty-order-list {
+  text-align: center;
+  margin-top: 40px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.empty-order-list__img {
+  width: 100%;
+  max-width: 500px;
+  display: block;
+  margin: 0 auto;
+}
+
+.empty-order-list__button {
+  color: white;
+  max-width: 300px;
+  margin: 10px auto;
+  display: block;
+  background: blue;
+  border: none;
+  min-height: 40px;
+  padding: 10px 30px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+.tomato {
+  display: block;
+  width: 70px;
+  height: 70px;
+  position: absolute;
+  animation: moveX 12s linear 1s infinite alternate,
+    moveY 10s linear infinite alternate, spin 1000ms linear infinite alternate;
+  cursor: crosshair;
+}
+
+/* from https://codepen.io/naveenmaurya/pen/HcLdv  */
+.broccoli {
+  cursor: crosshair;
+  display: block;
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  right: 40px;
+  bottom: 100px;
+
+  /* Animation to spin and move the sphere */
+  animation: spin 1000ms cubic-bezier(.86, 0, .07, 1) infinite,
+    moveLeftToRight 10s linear infinite, moveY 10s linear 5s infinite alternate;
+  transition: all 1s ease;
+}
+
+@keyframes moveX {
+  from {
+    left: 0;
+  }
+  to {
+    left: 90vw;
+  }
+}
+@keyframes moveY {
+  from {
+    top: 0;
+  }
+  to {
+    top: 80vh;
+  }
+}
+
+/* Spinning the sphere using key frames */
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes moveLeftToRight {
+  0% {
+    left: -10px;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* game area */
+.game-result {
+  position: fixed;
+  background: white;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #55e1ec;
+  padding: 20px;
+  border-radius: 3px;
+}
+.game-result__button {
+  position: block;
+  clear: both;
 }
