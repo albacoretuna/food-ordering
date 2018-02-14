@@ -362,6 +362,6 @@ export const OrderListEmpty = ({showGame, activateGame}) =>
       className="empty-order-list__img"
       src={CoupleSvg}
     />
-    {showGame && <Game />}
+    {showGame && <Game activateGame = {activateGame }/>}
   </div>;
 

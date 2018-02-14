@@ -33,6 +33,7 @@ class Game extends Component {
     });
   };
   closeRecordDisplay = () => {
+    this.props.activateGame();
     this.setState({record: null});
   }
 

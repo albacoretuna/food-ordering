@@ -362,11 +362,23 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  background: #55e1ec;
-  padding: 20px;
+  background: #d5d4ff;
+  padding: 50px;
   border-radius: 3px;
 }
 .game-result__button {
-  position: block;
-  clear: both;
+  display: block;
+  margin: 10px auto;
+  color: white;
+  max-width: 300px;
+  margin: 10px auto;
+  display: block;
+  background: #363696;
+  border: none;
+  border-radius: 3px;
+  min-height: 40px;
+  padding: 10px 30px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
 }

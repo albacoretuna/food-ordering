@@ -176,7 +176,7 @@ class App extends Component {
   };
 
   activateGame = () => {
-    this.setState({showGame: true})
+    this.setState({showGame: !this.state.showGame})
   }
 
   // let rendering begin!
