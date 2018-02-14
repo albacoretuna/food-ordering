@@ -195,10 +195,28 @@
 .who-ordered-what__span {
   font-weight: 600;
   text-transform: capitalize;
+  flex-grow: 0.3;
+  flex-basis: 0;
 }
-
+.who-ordered-what__span--food {
+  flex-grow: 1;
+  flex-basis: 0;
+}
 .who-ordered-what__i {
   color: rgba(33, 33, 33, 0.5);
+}
+
+@media (max-width: 580px) {
+.who-ordered-what__li {
+  padding: 10px;
+  display: block;
+  border: 1px solid rgba(52, 153, 227, 0.3);
+  border-left: none;
+  border-right: none;
+  border-top: none;
+}
+
+
 }
 
 @media print {
@@ -300,6 +318,7 @@
   animation: moveX 12s linear 1s infinite alternate,
     moveY 10s linear infinite alternate, spin 1000ms linear infinite alternate;
   cursor: crosshair;
+  user-select: none;
 }
 
 /* from https://codepen.io/naveenmaurya/pen/HcLdv  */
@@ -311,6 +330,7 @@
   position: absolute;
   right: 40px;
   bottom: 100px;
+  user-select: none;
 
   /* Animation to spin and move the sphere */
   animation: spin 1000ms cubic-bezier(.86, 0, .07, 1) infinite,

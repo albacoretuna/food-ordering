@@ -171,7 +171,7 @@ export const WhoOrderedWhat = ({
           orders.map((order, i) =>
             <li className="who-ordered-what__li" key={i}>
               <span className="who-ordered-what__span"> {order.name}</span>{' '}
-              {order.meal} {' '}
+              <span className="who-ordered-what__span--food" >{order.meal} {' '}</span>
               <i className="who-ordered-what__i">
                 Ordered on {format(order.Timestamp, 'MMM, Do YYYY')}
               </i>
@@ -245,7 +245,7 @@ export const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
     <div className="latest-order">
       {ordersAgeInDays >= 14 &&
         <h2>
-          The order seems to be ${ordersAgeInDays} days old, make sure you
+          The order seems to be {ordersAgeInDays} days old, make sure you
           haven't uploaded a wrong file :){' '}
         </h2>}
       The orders are from <b>{ordersAgeInDays} days ago</b>{' '}

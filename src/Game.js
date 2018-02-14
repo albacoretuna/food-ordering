@@ -21,7 +21,7 @@ class Game extends Component {
 
   componentDidMount() {
     this.setState({ gameStartedAt: Date.now() });
-    notify.show('Try to grab the vegetables!', 'custom', 5000, {
+    notify.show('Tap or Click on the vegetables as quickly as you can!', 'custom', 5000, {
       background: 'yellow',
       text: 'black',
     });
