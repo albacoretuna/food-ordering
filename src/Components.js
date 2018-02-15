@@ -1,6 +1,6 @@
 import React from 'react';
 import { trim, match, map, toLower, groupBy, isEmpty } from 'ramda';
-import { max, parse, format, differenceInDays } from 'date-fns';
+import { max, parse, format, differenceInDays, distanceInWordsToNow } from 'date-fns';
 
 // images
 import CoupleSvg from './img/couple.svg';
@@ -63,7 +63,7 @@ const extractRestaurantNames = surveyData => {
     return {
       meal: trim(order.meal || ''),
       restaurant: toLower(
-        match(restaurantNamePattern, trim(order.meal))[0] ||
+        match(restaurantNamePattern, order.meal.replace(/ /g,''))[0] ||
           '[unknown_restaurant]',
       ),
       email: order['Email Address'],
@@ -172,8 +172,8 @@ export const WhoOrderedWhat = ({
             <li className="who-ordered-what__li" key={i}>
               <span className="who-ordered-what__span"> {order.name}</span>{' '}
               <span className="who-ordered-what__span--food" >{order.meal} {' '}</span>
-              <i className="who-ordered-what__i">
-                Ordered on {format(order.Timestamp, 'MMM, Do YYYY')}
+              <i className="who-ordered-what__i" title={format(order.Timestamp, 'MMM, Do YYYY')}>
+                {distanceInWordsToNow(order.Timestamp, {addSuffix: true})}
               </i>
             </li>,
           )}
@@ -248,13 +248,13 @@ export const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
           The order seems to be {ordersAgeInDays} days old, make sure you
           haven't uploaded a wrong file :){' '}
         </h2>}
-      The orders are from <b>{ordersAgeInDays} days ago</b>{' '}
+      The orders are from <b>{distanceInWordsToNow(latestOrder,  {addSuffix: true})}</b>{' '}
       <i className="latest-order__i">({format(latestOrder, 'DD.MM.YYYY')})</i>
       <br />
       {' Total: '}
-      <b>
+      <i>
         {quantity} {' meals'}
-      </b>
+      </i>
       <button onClick={clear} className="latest-order__button">
         Remove All Orders
       </button>
