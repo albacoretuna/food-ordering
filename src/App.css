@@ -370,8 +370,10 @@
   top: 50%;
   transform: translate(-50%, -50%);
   background: #d5d4ff;
-  padding: 50px;
+  padding: 20px;
   border-radius: 3px;
+  width: 100%;
+  max-width: 500px;
 }
 .game-result__button {
   display: block;
