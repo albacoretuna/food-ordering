@@ -11,6 +11,7 @@ const initialState = {
   tomatoShotAt: 0,
   broccoliShotAt: 0,
   record: null,
+  bestRecord: 10000000,
 };
 
 class Game extends Component {
@@ -18,7 +19,12 @@ class Game extends Component {
     super();
     this.state = initialState;
   }
-
+  updateBestRecord = ({record}) => {
+    const bestRecord = parseFloat(this.state.bestRecord, 10);
+    if( bestRecord > parseFloat(record, 10)) {
+      this.setState({bestRecord: parseFloat(record, 10)})
+    }
+  }
   componentDidMount() {
     this.setState({ gameStartedAt: Date.now() });
     notify.show('Tap or Click on the vegetables as quickly as you can!', 'custom', 5000, {
@@ -28,8 +34,12 @@ class Game extends Component {
   }
 
   resetGame = () => {
+    const bestRecord = this.state.bestRecord;
     this.setState(initialState, () => {
-      this.setState({ gameStartedAt: Date.now() });
+      this.setState({
+        gameStartedAt: Date.now(),
+        bestRecord
+      });
     });
   };
   closeRecordDisplay = () => {
@@ -42,20 +52,18 @@ class Game extends Component {
       case 'tomato':
         this.setState({ tomatoShotAt: Date.now() }, () => {
           if (this.state.broccoliShotAt !== 0) {
-            this.setState({
-              record:
-                (this.state.tomatoShotAt - this.state.gameStartedAt) / 1000,
-            });
+            const record = (this.state.tomatoShotAt - this.state.gameStartedAt) / 1000
+            this.setState({record});
+            this.updateBestRecord({record})
           }
         });
         break;
       case 'broccoli':
         this.setState({ broccoliShotAt: Date.now() }, () => {
           if (this.state.tomatoShotAt !== 0) {
-            this.setState({
-              record:
-                (this.state.broccoliShotAt - this.state.gameStartedAt) / 1000,
-            });
+            const record = (this.state.broccoliShotAt - this.state.gameStartedAt) / 1000;
+            this.setState({record});
+            this.updateBestRecord({record})
           }
         });
         break;
@@ -89,6 +97,7 @@ class Game extends Component {
         {this.state.record &&
           <div className="game-result">
             {' '}<p>Your record: {this.state.record} seconds</p>{' '}
+            {' '}<p>Your best record: {this.state.bestRecord} seconds</p>{' '}
             <button onClick={this.resetGame} className="game-result__button">
               Play Again
             </button>

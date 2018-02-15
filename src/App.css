@@ -207,16 +207,14 @@
 }
 
 @media (max-width: 580px) {
-.who-ordered-what__li {
-  padding: 10px;
-  display: block;
-  border: 1px solid rgba(52, 153, 227, 0.3);
-  border-left: none;
-  border-right: none;
-  border-top: none;
-}
-
-
+  .who-ordered-what__li {
+    padding: 10px;
+    display: block;
+    border: 1px solid rgba(52, 153, 227, 0.3);
+    border-left: none;
+    border-right: none;
+    border-top: none;
+  }
 }
 
 @media print {
@@ -295,6 +293,7 @@
   max-width: 500px;
   display: block;
   margin: 0 auto;
+  user-select: none;
 }
 
 .empty-order-list__button {
@@ -314,11 +313,11 @@
   display: block;
   width: 70px;
   height: 70px;
-  position: absolute;
-  animation: moveX 12s linear 1s infinite alternate,
-    moveY 10s linear infinite alternate, spin 1000ms linear infinite alternate;
+  position: fixed;
   cursor: crosshair;
   user-select: none;
+  animation: moveLeftToRight 3s linear 1s infinite alternate,
+    moveY 3s linear infinite alternate, spin 500ms linear infinite alternate;
 }
 
 /* from https://codepen.io/naveenmaurya/pen/HcLdv  */
@@ -327,31 +326,19 @@
   display: block;
   width: 60px;
   height: 60px;
-  position: absolute;
-  right: 40px;
-  bottom: 100px;
+  position: fixed;
   user-select: none;
 
-  /* Animation to spin and move the sphere */
-  animation: spin 1000ms cubic-bezier(.86, 0, .07, 1) infinite,
-    moveLeftToRight 10s linear infinite, moveY 10s linear 5s infinite alternate;
-  transition: all 1s ease;
+  animation: spin 600ms cubic-bezier(.86, 0, .07, 1) infinite,
+    moveLeftToRight 3s linear infinite, moveY 3s linear 3s infinite alternate;
 }
 
-@keyframes moveX {
-  from {
-    left: 0;
-  }
-  to {
-    left: 90vw;
-  }
-}
 @keyframes moveY {
   from {
     top: 0;
   }
   to {
-    top: 80vh;
+    top: 900px;
   }
 }
 
@@ -371,7 +358,7 @@
     left: -10px;
   }
   100% {
-    left: 100%;
+    left: 600px;
   }
 }
 
