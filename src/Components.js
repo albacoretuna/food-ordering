@@ -1,6 +1,12 @@
 import React from 'react';
 import { trim, match, map, toLower, groupBy, isEmpty } from 'ramda';
-import { max, parse, format, differenceInDays, distanceInWordsToNow } from 'date-fns';
+import {
+  max,
+  parse,
+  format,
+  differenceInDays,
+  distanceInWordsToNow,
+} from 'date-fns';
 
 // images
 import CoupleSvg from './img/couple.svg';
@@ -9,7 +15,7 @@ import CoupleSvg from './img/couple.svg';
 import Dropzone from 'react-dropzone';
 
 // components
-import Game from './Game.js'
+import Game from './Game.js';
 
 const groupByRestaurants = data => {
   const byRestaurant = groupBy(order => order.restaurant);
@@ -63,7 +69,7 @@ const extractRestaurantNames = surveyData => {
     return {
       meal: trim(order.meal || ''),
       restaurant: toLower(
-        match(restaurantNamePattern, order.meal.replace(/ /g,''))[0] ||
+        match(restaurantNamePattern, order.meal.replace(/ /g, ''))[0] ||
           '[unknown_restaurant]',
       ),
       email: order['Email Address'],
@@ -122,6 +128,12 @@ export const RestaurantOrders = ({ surveyData = [] }) => {
                   <b> {orders[restaurant][food]} kpl </b> {food}
                 </li>,
               )}{' '}
+              <li className="restaurant-orders__li">
+                Total:{' '}
+                <b>
+                  {Object.values(orders[restaurant]).reduce((a, b) => a + b, 0)}
+                </b>
+              </li>
             </ul>
           </div>,
         )}
@@ -171,9 +183,14 @@ export const WhoOrderedWhat = ({
           orders.map((order, i) =>
             <li className="who-ordered-what__li" key={i}>
               <span className="who-ordered-what__span"> {order.name}</span>{' '}
-              <span className="who-ordered-what__span--food" >{order.meal} {' '}</span>
-              <i className="who-ordered-what__i" title={format(order.Timestamp, 'MMM, Do YYYY')}>
-                {distanceInWordsToNow(order.Timestamp, {addSuffix: true})}
+              <span className="who-ordered-what__span--food">
+                {order.meal} {' '}
+              </span>
+              <i
+                className="who-ordered-what__i"
+                title={format(order.Timestamp, 'MMM, Do YYYY')}
+              >
+                {distanceInWordsToNow(order.Timestamp, { addSuffix: true })}
               </i>
             </li>,
           )}
@@ -248,7 +265,8 @@ export const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
           The order seems to be {ordersAgeInDays} days old, make sure you
           haven't uploaded a wrong file :){' '}
         </h2>}
-      The orders are from <b>{distanceInWordsToNow(latestOrder,  {addSuffix: true})}</b>{' '}
+      The orders are from{' '}
+      <b>{distanceInWordsToNow(latestOrder, { addSuffix: true })}</b>{' '}
       <i className="latest-order__i">({format(latestOrder, 'DD.MM.YYYY')})</i>
       <br />
       {' Total: '}
@@ -353,15 +371,22 @@ export const Wrapper = ({ children }) =>
     {children}
   </section>;
 
-export const OrderListEmpty = ({showGame, activateGame}) =>
+export const OrderListEmpty = ({ showGame, activateGame }) =>
   <div className="empty-order-list">
     <p>No orders here yet. Check back later. </p>
-    {!showGame && <button className="empty-order-list__button" onClick={() => {activateGame()}}>Or Play a game</button>}
+    {!showGame &&
+      <button
+        className="empty-order-list__button"
+        onClick={() => {
+          activateGame();
+        }}
+      >
+        Or Play a game
+      </button>}
     <img
       alt="no orders available"
       className="empty-order-list__img"
       src={CoupleSvg}
     />
-    {showGame && <Game activateGame = {activateGame }/>}
+    {showGame && <Game activateGame={activateGame} />}
   </div>;
-
