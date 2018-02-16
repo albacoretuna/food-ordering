@@ -9,6 +9,7 @@
     "body-parser": "1.18.2",
     "css-toggle-switch": "4.1.0",
     "date-fns": "1.29.0",
+    "escape-string-regexp": "1.0.5",
     "express": "4.16.2",
     "express-promise-router": "3.0.1",
     "joi": "13.1.2",

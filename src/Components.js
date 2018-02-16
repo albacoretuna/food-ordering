@@ -8,6 +8,8 @@ import {
   distanceInWordsToNow,
 } from 'date-fns';
 
+import escapeStringRegexp from 'escape-string-regexp';
+
 // images
 import CoupleSvg from './img/couple.svg';
 
@@ -154,7 +156,7 @@ export const WhoOrderedWhat = ({
       Timestamp: order.Timestamp,
     }))
     // filter out by name
-    .filter(order => toLower(order.name).match(toLower(searchTerm)))
+    .filter(order => toLower(order.name).match(toLower(escapeStringRegexp(searchTerm))))
     // sort alphabetically
     .sort((a, b) => a.name.localeCompare(b.name));
 
