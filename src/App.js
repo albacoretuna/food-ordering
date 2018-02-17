@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import * as CSVParser from 'papaparse';
 
 import Joi from 'joi-browser';
@@ -201,6 +201,7 @@ class App extends Component {
             </div>
             }
           {this.state.error && <ErrorContainer error={this.state.error} />}
+
           {this.state.loading &&
             <div className="loading-holder">
               <div className="loading" />
@@ -222,12 +223,12 @@ class App extends Component {
             <FileUploader onDrop={this.onDrop} />}
 
           {this.state.surveyData &&
-            this.state.adminView &&
-            <Mailer surveyData={this.state.surveyData} />}
+          this.state.adminView && <Fragment>
+            <Mailer surveyData={this.state.surveyData} />
+            <RestaurantOrders surveyData={this.state.surveyData} />
+          </Fragment>}
 
-          {this.state.surveyData &&
-            this.state.adminView &&
-            <RestaurantOrders surveyData={this.state.surveyData} />}
+
           {this.state.surveyData &&
             !isEmpty(this.state.surveyData) &&
             !this.state.adminView &&
