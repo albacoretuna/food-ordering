@@ -256,7 +256,7 @@ export const AdminSwitch = ({ handleChange }) => {
   );
 };
 
-export const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
+export const LatestOrderNotice = ({ surveyData, quantity, createdBy, clear }) => {
   const latestOrder = getLatestOrder({ orders: surveyData });
   const ordersAgeInDays = differenceInDays(Date.now(), latestOrder);
 
@@ -275,6 +275,12 @@ export const LatestOrderNotice = ({ surveyData, quantity, clear }) => {
       <i>
         {quantity} {' meals'}
       </i>
+      <br />
+      {createdBy &&
+      <i>
+        {' Created by: '} {createdBy}
+      </i>
+      }
       <button onClick={clear} className="latest-order__button">
         Remove All Orders
       </button>

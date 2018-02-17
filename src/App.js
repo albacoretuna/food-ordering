@@ -58,7 +58,8 @@ class App extends Component {
       adminView: false,
       loading: true,
       searchTerm: '',
-      showGame: false
+      showGame: false,
+      createdBy: ''
     };
   }
 
@@ -122,13 +123,14 @@ class App extends Component {
 
   loadSurveyData = async () => {
     try {
-      const { survey_data } = (await axios.get('/api/survey-data/latest', {
+      const { survey_data, username } = (await axios.get('/api/survey-data/latest', {
         timeout: 10000,
       })).data;
       this.setState({
         surveyData: survey_data,
         error: null,
         loading: false,
+        createdBy: username
       });
     } catch (e) {
       console.log('Getting data from database panic!: ', e);
@@ -136,6 +138,7 @@ class App extends Component {
         surveyData: [],
         error: { details: [e.message], apiError: true },
         loading: false,
+        createdBy: ''
       });
     }
   };
@@ -176,8 +179,8 @@ class App extends Component {
   };
 
   activateGame = () => {
-    this.setState({showGame: !this.state.showGame})
-  }
+    this.setState({ showGame: !this.state.showGame });
+  };
 
   // let rendering begin!
   render() {
@@ -188,12 +191,22 @@ class App extends Component {
             <AdminSwitch handleChange={this.handleAdminSwitchChange} />
           </Header>
           <Notifications />
+          {this.state.adminView &&
+            <div className="admin-view">
+              <h1>Admin view</h1>
+              <p>
+                Be careful, don't mess up
+                with 200 hungry people's food orders :D{' '}
+              </p>
+            </div>
+            }
           {this.state.error && <ErrorContainer error={this.state.error} />}
           {this.state.loading &&
             <div className="loading-holder">
               <div className="loading" />
               <p className="loading-holder__p">Loading...</p>
             </div>}
+
           {this.state.surveyData &&
             this.state.adminView &&
             !isEmpty(this.state.surveyData) &&
@@ -201,6 +214,7 @@ class App extends Component {
               surveyData={this.state.surveyData}
               quantity={path(['surveyData', 'length'], this.state)}
               clear={this.clearSurveyData}
+              createdBy={this.state.createdBy}
             />}
           {(!this.state.surveyData || isEmpty(this.state.surveyData)) &&
             this.state.adminView &&
@@ -226,7 +240,10 @@ class App extends Component {
           {this.state.surveyData &&
             isEmpty(this.state.surveyData) &&
             !this.state.adminView &&
-            <OrderListEmpty showGame={this.state.showGame} activateGame={this.activateGame}/>}
+            <OrderListEmpty
+              showGame={this.state.showGame}
+              activateGame={this.activateGame}
+            />}
         </Wrapper>
         <Footer />
       </div>

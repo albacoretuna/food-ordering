@@ -82,7 +82,7 @@ app.get('/api/survey-data/all', async (req, res) => {
 app.get('/api/survey-data/latest', async (req, res) => {
   try {
     const { rows } = await query(
-      'SELECT survey_data, created_at FROM orders ORDER by id desc LIMIT 1',
+      'SELECT survey_data, created_at, username FROM orders ORDER by id desc LIMIT 1',
     );
     res.send(rows[0]);
   } catch (e) {

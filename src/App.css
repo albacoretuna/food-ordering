@@ -37,9 +37,8 @@
   display: block;
   margin: 15px;
 }
-.App-title {
-  font-size: 1em;
-  text-align: left;
+.admin-view {
+  text-align: center;
 }
 
 .latest-order {
