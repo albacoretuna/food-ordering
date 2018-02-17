@@ -308,6 +308,9 @@
   font-size: 14px;
   font-weight: 600;
 }
+.empty-order-list__p {
+  user-select: none;
+}
 .tomato {
   display: block;
   width: 70px;

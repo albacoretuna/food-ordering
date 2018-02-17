@@ -381,7 +381,7 @@ export const Wrapper = ({ children }) =>
 
 export const OrderListEmpty = ({ showGame, activateGame }) =>
   <div className="empty-order-list">
-    <p>No orders here yet. Check back later. </p>
+    <p className="empty-order-list__p">No orders here yet. Check back later. </p>
     {!showGame &&
       <button
         className="empty-order-list__button"
