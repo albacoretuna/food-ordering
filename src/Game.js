@@ -74,8 +74,8 @@ class Game extends Component {
 
   render() {
     return (
-      <React.Fragment>
-        <div />
+      <div className="game-area">
+        <button className="game-area__button" onClick={()=> {this.props.exitGame()}}>X</button>
         {this.state.tomatoShotAt === 0 &&
           <img
             alt="tomato"
@@ -96,6 +96,7 @@ class Game extends Component {
           />}
         {this.state.record &&
           <div className="game-result">
+            <h1>You won!</h1>
             {' '}<p>Your record: {this.state.record} seconds</p>{' '}
             {' '}<p>Your best record: {this.state.bestRecord} seconds</p>{' '}
             <button onClick={this.resetGame} className="game-result__button">
@@ -106,7 +107,7 @@ class Game extends Component {
               Close
             </button>
           </div>}
-      </React.Fragment>
+      </div>
     );
   }
 }

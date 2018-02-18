@@ -182,6 +182,10 @@ class App extends Component {
     this.setState({ showGame: !this.state.showGame });
   };
 
+  exitGame = () => {
+    this.setState({ showGame: false });
+  };
+
   // let rendering begin!
   render() {
     return (
@@ -244,6 +248,7 @@ class App extends Component {
             <OrderListEmpty
               showGame={this.state.showGame}
               activateGame={this.activateGame}
+              exitGame={this.exitGame}
             />}
         </Wrapper>
         <Footer />

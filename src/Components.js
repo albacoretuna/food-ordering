@@ -379,7 +379,7 @@ export const Wrapper = ({ children }) =>
     {children}
   </section>;
 
-export const OrderListEmpty = ({ showGame, activateGame }) =>
+export const OrderListEmpty = ({ showGame, activateGame, exitGame }) =>
   <div className="empty-order-list">
     <p className="empty-order-list__p">No orders here yet. Check back later. </p>
     {!showGame &&
@@ -396,5 +396,5 @@ export const OrderListEmpty = ({ showGame, activateGame }) =>
       className="empty-order-list__img"
       src={CoupleSvg}
     />
-    {showGame && <Game activateGame={activateGame} />}
+    {showGame && <Game activateGame={activateGame} exitGame={exitGame}/>}
   </div>;

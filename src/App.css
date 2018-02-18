@@ -365,13 +365,33 @@
 }
 
 /* game area */
+.game-area {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background: #1abc9c;
+  top: 0;
+  z-index: 10;
+}
+
+.game-area__button {
+  position: fixed;
+  top: 5px;
+  right: 5px;
+  border: none;
+  background: #134a6f;
+  color: white;
+  padding: 10px;
+  border-radius:4px;
+  user-select: none;
+}
+
 .game-result {
   position: fixed;
-  background: white;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  background: #d5d4ff;
+  background: white;
   padding: 20px;
   border-radius: 3px;
   width: 100%;
