@@ -1,6 +1,6 @@
 {
   "name": "food-ordering",
-  "version": "13.4.0",
+  "version": "13.4.1",
   "description": "A web app for mass ordering food, using React, Express, ...",
   "private": false,
   "proxy": "http://localhost:8000",
