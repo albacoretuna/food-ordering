@@ -374,6 +374,12 @@
   z-index: 10;
 }
 
+.game-area__div {
+  margin-top: 5px;
+  user-select: none;
+  color: white;
+}
+
 .game-area__button {
   position: fixed;
   top: 5px;
@@ -396,6 +402,7 @@
   border-radius: 3px;
   width: 100%;
   max-width: 500px;
+  user-select: none;
 }
 .game-result__button {
   display: block;
@@ -412,4 +419,5 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
+  user-select: none;
 }

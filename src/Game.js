@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-import { notify } from 'react-notify-toast';
 
 // images
 import TomatoSvg from './img/tomato.svg';
@@ -27,10 +26,6 @@ class Game extends Component {
   }
   componentDidMount() {
     this.setState({ gameStartedAt: Date.now() });
-    notify.show('Tap or Click on the vegetables as quickly as you can!', 'custom', 5000, {
-      background: 'yellow',
-      text: 'black',
-    });
   }
 
   resetGame = () => {
@@ -42,10 +37,6 @@ class Game extends Component {
       });
     });
   };
-  closeRecordDisplay = () => {
-    this.props.activateGame();
-    this.setState({record: null});
-  }
 
   shoot = target => {
     switch (target) {
@@ -103,10 +94,11 @@ class Game extends Component {
               Play Again
             </button>
 
-            <button onClick={this.closeRecordDisplay} className="game-result__button">
+            <button onClick={()=> {this.props.exitGame()}} className="game-result__button">
               Close
             </button>
           </div>}
+          <div className="game-area__div">Click on each vegetable as quickly as you can!</div>
       </div>
     );
   }

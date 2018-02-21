@@ -179,7 +179,7 @@ class App extends Component {
   };
 
   activateGame = () => {
-    this.setState({ showGame: !this.state.showGame });
+    this.setState({ showGame: true });
   };
 
   exitGame = () => {
