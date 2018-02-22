@@ -1,26 +1,17 @@
-FROM node:9.4
+FROM node:9.4 as build
 MAINTAINER Omid Hezaveh <Omid.Hezaveh@futurice.com>
 
-
-# Create app directory
-RUN mkdir -p /src/app
-WORKDIR /src/app
-
-# to make npm test run only once non-interactively
-ENV CI=true
+WORKDIR /app
 
 # Install app dependencies
-COPY package.json /src/app/
-RUN npm install && \
-    npm install pm2 -g
+COPY . ./
 
-# Bundle app source
-COPY . /src/app
+# install dependencies, Build and optimize the react app
+RUN npm install && npm run build && npm install pm2 -g
 
-# Build and optimize react app
-RUN npm run build
-
+# two step build idea from https://learnk8s.io/blog/smaller-docker-images
+FROM node:8-alpine
+COPY --from=build /app /
 EXPOSE 8000
-
-# defined in package.json
 CMD [ "pm2-runtime", "server.js" ]
+
