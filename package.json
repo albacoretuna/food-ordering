@@ -1,6 +1,6 @@
 {
   "name": "food-ordering",
-  "version": "13.4.1",
+  "version": "13.5.0",
   "description": "A web app for mass ordering food, using React, Express, ...",
   "private": false,
   "proxy": "http://localhost:8000",
@@ -35,8 +35,8 @@
     "nodemon": "1.14.12"
   },
   "license": "MIT",
-  "repository" :
-  { "type" : "git"
-    , "url" : "https://github.com/omidfi/food-ordering.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omidfi/food-ordering.git"
   }
 }
