@@ -11,6 +11,7 @@ const initialState = {
   broccoliShotAt: 0,
   record: null,
   bestRecord: 10000000,
+  duration: 0
 };
 
 class Game extends Component {
@@ -26,14 +27,26 @@ class Game extends Component {
   }
   componentDidMount() {
     this.setState({ gameStartedAt: Date.now() });
+    let DurationTimer = setInterval(()=> {this.updateDuration() }, 100 );
+    this.setState({timer: DurationTimer})
+  }
+
+  updateDuration() {
+   this.setState({duration: (Date.now() - this.state.gameStartedAt)/1000 })
+  }
+
+  stopTimer() {
+    clearInterval(this.state.timer)
   }
 
   resetGame = () => {
     const bestRecord = this.state.bestRecord;
+    let timer = setInterval(()=> {this.updateDuration() }, 100 );
     this.setState(initialState, () => {
       this.setState({
         gameStartedAt: Date.now(),
-        bestRecord
+        bestRecord,
+        timer
       });
     });
   };
@@ -46,6 +59,7 @@ class Game extends Component {
             const record = (this.state.tomatoShotAt - this.state.gameStartedAt) / 1000
             this.setState({record});
             this.updateBestRecord({record})
+            this.stopTimer();
           }
         });
         break;
@@ -55,6 +69,7 @@ class Game extends Component {
             const record = (this.state.broccoliShotAt - this.state.gameStartedAt) / 1000;
             this.setState({record});
             this.updateBestRecord({record})
+            this.stopTimer();
           }
         });
         break;
@@ -98,7 +113,8 @@ class Game extends Component {
               Close
             </button>
           </div>}
-          <div className="game-area__div">Click on each vegetable as quickly as you can!</div>
+          <div className="game-area__div">Click on each vegetable as quickly as you can! </div>
+          <div className="game-area__div--timer">{this.state.duration} seconds</div>
       </div>
     );
   }
