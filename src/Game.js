@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-
 // images
 import TomatoSvg from './img/tomato.svg';
 import BroccoliSvg from './img/broccoli.svg';
@@ -11,7 +10,9 @@ const initialState = {
   broccoliShotAt: 0,
   record: null,
   bestRecord: 10000000,
-  duration: 0
+  duration: 0,
+  clicks: 0,
+  gameEnded: false
 };
 
 class Game extends Component {
@@ -19,46 +20,62 @@ class Game extends Component {
     super();
     this.state = initialState;
   }
-  updateBestRecord = ({record}) => {
+  updateBestRecord = ({ record }) => {
     const bestRecord = parseFloat(this.state.bestRecord, 10);
-    if( bestRecord > parseFloat(record, 10)) {
-      this.setState({bestRecord: parseFloat(record, 10)})
+    if (bestRecord > parseFloat(record, 10)) {
+      this.setState({ bestRecord: parseFloat(record, 10)});
     }
-  }
+  };
   componentDidMount() {
     this.setState({ gameStartedAt: Date.now() });
-    let DurationTimer = setInterval(()=> {this.updateDuration() }, 100 );
-    this.setState({timer: DurationTimer})
+    let timer = setInterval(() => {
+      this.updateDuration();
+    }, 100);
+    this.setState({ timer });
   }
 
   updateDuration() {
-   this.setState({duration: (Date.now() - this.state.gameStartedAt)/1000 })
+    this.setState({
+      duration: ((Date.now() - this.state.gameStartedAt) / 1000).toFixed(1),
+    });
   }
 
   stopTimer() {
-    clearInterval(this.state.timer)
+    clearInterval(this.state.timer);
   }
 
   resetGame = () => {
     const bestRecord = this.state.bestRecord;
-    let timer = setInterval(()=> {this.updateDuration() }, 100 );
+    let timer = setInterval(() => {
+      this.updateDuration();
+    }, 100);
     this.setState(initialState, () => {
       this.setState({
         gameStartedAt: Date.now(),
         bestRecord,
-        timer
+        timer,
+        clicks: 0
       });
     });
   };
+
+  countClicks = () => {
+    if(this.state.gameEnded)
+      return;
+    this.setState({
+      clicks: this.state.clicks + 1,
+    });
+  }
 
   shoot = target => {
     switch (target) {
       case 'tomato':
         this.setState({ tomatoShotAt: Date.now() }, () => {
           if (this.state.broccoliShotAt !== 0) {
-            const record = (this.state.tomatoShotAt - this.state.gameStartedAt) / 1000
-            this.setState({record});
-            this.updateBestRecord({record})
+            const record =
+              (this.state.tomatoShotAt - this.state.gameStartedAt) / 1000;
+            this.setState({ record, gameEnded: true });
+            this.updateBestRecord({ record });
             this.stopTimer();
           }
         });
@@ -66,9 +83,10 @@ class Game extends Component {
       case 'broccoli':
         this.setState({ broccoliShotAt: Date.now() }, () => {
           if (this.state.tomatoShotAt !== 0) {
-            const record = (this.state.broccoliShotAt - this.state.gameStartedAt) / 1000;
-            this.setState({record});
-            this.updateBestRecord({record})
+            const record =
+              (this.state.broccoliShotAt - this.state.gameStartedAt) / 1000;
+            this.setState({ record, gameEnded: true });
+            this.updateBestRecord({ record });
             this.stopTimer();
           }
         });
@@ -80,8 +98,15 @@ class Game extends Component {
 
   render() {
     return (
-      <div className="game-area">
-        <button className="game-area__button" onClick={()=> {this.props.exitGame()}}>X</button>
+      <div className="game-area" onClick={() => {this.countClicks()}}>
+        <button
+          className="game-area__button"
+          onClick={() => {
+            this.props.exitGame();
+          }}
+        >
+          X
+        </button>
         {this.state.tomatoShotAt === 0 &&
           <img
             alt="tomato"
@@ -102,19 +127,27 @@ class Game extends Component {
           />}
         {this.state.record &&
           <div className="game-result">
-            <h1>You won!</h1>
-            {' '}<p>Your record: {this.state.record} seconds</p>{' '}
-            {' '}<p>Your best record: {this.state.bestRecord} seconds</p>{' '}
+            <h1>You won!</h1> <p>Your record: {this.state.record} seconds</p> {' '}
+            <p> clicks: {this.state.clicks} </p>
+            <p>Your best record: {this.state.bestRecord} seconds</p>{' '}
             <button onClick={this.resetGame} className="game-result__button">
               Play Again
             </button>
-
-            <button onClick={()=> {this.props.exitGame()}} className="game-result__button">
+            <button
+              onClick={() => {
+                this.props.exitGame();
+              }}
+              className="game-result__button"
+            >
               Close
             </button>
           </div>}
-          <div className="game-area__div">Click on each vegetable as quickly as you can! </div>
-          <div className="game-area__div--timer">{this.state.duration} seconds</div>
+        <div className="game-area__div">
+          Click on each vegetable as quickly as you can!{' '}
+        </div>
+        <div className="game-area__div--timer">
+          {this.state.duration} seconds
+        </div>
       </div>
     );
   }
