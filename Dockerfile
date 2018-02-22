@@ -7,7 +7,7 @@ WORKDIR /app
 COPY . ./
 
 # install dependencies, Build and optimize the react app
-RUN npm install && npm run build && npm install pm2 -g
+RUN npm install && npm run build
 
 # two step build idea from https://learnk8s.io/blog/smaller-docker-images
 FROM node:8-alpine
