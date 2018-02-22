@@ -11,6 +11,7 @@ RUN npm install && npm run build && npm install pm2 -g
 
 # two step build idea from https://learnk8s.io/blog/smaller-docker-images
 FROM node:8-alpine
+RUN npm install pm2 -g
 COPY --from=build /app /
 EXPOSE 8000
 CMD [ "pm2-runtime", "server.js" ]
