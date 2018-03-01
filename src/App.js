@@ -35,14 +35,47 @@ import {
 const ordersSchemaIsInvalid = orders => {
   const restaurantNamePattern = /\[.+\]/;
   const ordersSchema = Joi.array().items(
-    Joi.object({
-      Timestamp: Joi.date().required(),
-      'Email Address': Joi.string().email().required(),
-      meal: Joi.string().min(5).regex(restaurantNamePattern).required(),
-    }),
+    Joi.alternatives().try(
+      Joi.object({
+        Timestamp: Joi.date().required(),
+        'Email Address': Joi.string().email().required(),
+        meal: Joi.string().min(5).regex(restaurantNamePattern).required(),
+      }).example({
+        Timestamp: '2018/02/26 9:42:01 AM GMT+2',
+        'Email Address': 'Rosa.Parks@civilrights.com',
+        meal: '[Fafa] RP01 Vegan Mezze',
+      }),
+      Joi.object({
+        Timestamp: Joi.date().required(),
+        Username: Joi.string().email().required(),
+        meal: Joi.string().min(5).regex(restaurantNamePattern).required(),
+      }).example({
+        Timestamp: '2018/02/26 9:42:01 AM GMT+2',
+        Username: 'Rosa.Parks@civilrights.com',
+        meal: '[Fafa] RP01 Vegan Mezze',
+      }),
+    ),
   );
 
   return Joi.validate(orders, ordersSchema, { allowUnknown: true }).error;
+};
+
+const renameOrderKeys = ({ orders }) => {
+  if (!orders[0]) {
+    return orders;
+  }
+
+  if (orders[0].Username) {
+    return orders.map(order => {
+      const renamedOrder = {};
+      renamedOrder.Timestamp = order.Timestamp;
+      renamedOrder['Email Address'] = order.Username;
+      renamedOrder.meal = order.meal;
+
+      return renamedOrder;
+    });
+  }
+  return orders;
 };
 
 const persistToDatabase = data =>
@@ -59,7 +92,7 @@ class App extends Component {
       loading: true,
       searchTerm: '',
       showGame: false,
-      createdBy: ''
+      createdBy: '',
     };
   }
 
@@ -106,13 +139,13 @@ class App extends Component {
     }
 
     this.setState({
-      surveyData: orders,
+      surveyData: renameOrderKeys({ orders }),
       error: null,
     });
 
     try {
       this.setState({ loading: true });
-      await persistToDatabase(orders);
+      await persistToDatabase(renameOrderKeys({ orders }));
       this.setState({ loading: false });
       notify.show('Orders saved successfully!', 'success', 10000);
     } catch (error) {
@@ -123,14 +156,18 @@ class App extends Component {
 
   loadSurveyData = async () => {
     try {
-      const { survey_data, username } = (await axios.get('/api/survey-data/latest', {
-        timeout: 10000,
+      const {
+        survey_data,
+        username,
+      } = (await axios.get('/api/survey-data/latest', {
+        // FIXME increase it
+        timeout: 3000,
       })).data;
       this.setState({
         surveyData: survey_data,
         error: null,
         loading: false,
-        createdBy: username
+        createdBy: username,
       });
     } catch (e) {
       console.log('Getting data from database panic!: ', e);
@@ -138,7 +175,7 @@ class App extends Component {
         surveyData: [],
         error: { details: [e.message], apiError: true },
         loading: false,
-        createdBy: ''
+        createdBy: '',
       });
     }
   };
@@ -199,11 +236,10 @@ class App extends Component {
             <div className="admin-view">
               <h1>Admin view</h1>
               <p>
-                Be careful, don't mess up
-                with 200 hungry people's food orders :D{' '}
+                Be careful, don't mess up with 200 hungry people's food orders
+                :D{' '}
               </p>
-            </div>
-            }
+            </div>}
           {this.state.error && <ErrorContainer error={this.state.error} />}
 
           {this.state.loading &&
@@ -227,11 +263,11 @@ class App extends Component {
             <FileUploader onDrop={this.onDrop} />}
 
           {this.state.surveyData &&
-          this.state.adminView && <Fragment>
-            <Mailer surveyData={this.state.surveyData} />
-            <RestaurantOrders surveyData={this.state.surveyData} />
-          </Fragment>}
-
+            this.state.adminView &&
+            <Fragment>
+              <Mailer surveyData={this.state.surveyData} />
+              <RestaurantOrders surveyData={this.state.surveyData} />
+            </Fragment>}
 
           {this.state.surveyData &&
             !isEmpty(this.state.surveyData) &&
