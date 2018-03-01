@@ -160,8 +160,7 @@ class App extends Component {
         survey_data,
         username,
       } = (await axios.get('/api/survey-data/latest', {
-        // FIXME increase it
-        timeout: 3000,
+        timeout: 10000,
       })).data;
       this.setState({
         surveyData: survey_data,
@@ -183,7 +182,27 @@ class App extends Component {
   async componentDidMount() {
     await this.loadSurveyData();
   }
-
+  loadSampleData = () => {
+    this.setState({
+      surveyData: [
+        {
+          Timestamp: '2018/02/26 9:42:01 AM GMT+2',
+          'Email Address': 'Rosa.Parks@civilrights.com',
+          meal: '[Fafa] RP01 Vegan Mezze',
+        },
+        {
+          Timestamp: '2018/02/27 9:42:01 AM GMT+2',
+          'Email Address': 'Red.Panda@wwf.com',
+          meal: '[KotiPizza] KO3 Margaritha pizza',
+        },
+        {
+          Timestamp: '2018/02/23 9:42:01 AM GMT+2',
+          'Email Address': 'Happy.Sloth@wwf.com',
+          meal: '[Fafa] RP01 Vegan Mezze',
+        },
+      ],
+    });
+  };
   clearSurveyData = async () => {
     if (window.confirm('Are you sure you want to cleare these information?')) {
       this.setState({
@@ -285,6 +304,7 @@ class App extends Component {
               showGame={this.state.showGame}
               activateGame={this.activateGame}
               exitGame={this.exitGame}
+              loadSampleData={this.loadSampleData}
             />}
         </Wrapper>
         <Footer />

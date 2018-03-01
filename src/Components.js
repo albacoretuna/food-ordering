@@ -28,7 +28,7 @@ const groupByRestaurants = data => {
 const sendEmails = ({ meals, restaurant }) => {
   const timeout = 2000;
 
-  const mailtoPrefix = `mailto:?subject=Your food from ${restaurant} arrived!&body=Hi,\n Please find your selected meal at the kitchen. See food.play.futurice.com to remember what you ordered. \n Hugs, FutuFriday Team\n[PaydayPizza]&bcc=`;
+  const mailtoPrefix = `mailto:?subject=Your food from ${restaurant} arrived!&body=Hi, Please find your selected meal at the kitchen. See food.play.futurice.com to remember what you have ordered. Hugs, FutuFriday organizers [PaydayPizza]&bcc=`;
 
   const maxUrlCharacters = 1900;
   const separator = ';';
@@ -379,9 +379,10 @@ export const Wrapper = ({ children }) =>
     {children}
   </section>;
 
-export const OrderListEmpty = ({ showGame, activateGame, exitGame }) =>
+export const OrderListEmpty = ({ showGame, activateGame, exitGame, loadSampleData }) =>
   <div className="empty-order-list">
     <p className="empty-order-list__p">No orders here yet. Check back later. </p>
+    <a href="https://duckduckgo.com/?q=wwf+red+pandas" >Or learn about Red Pandas</a>
     {!showGame &&
       <button
         className="empty-order-list__button"
@@ -391,6 +392,14 @@ export const OrderListEmpty = ({ showGame, activateGame, exitGame }) =>
       >
         Or Play a game
       </button>}
+      <button
+        className="empty-order-list__button"
+        onClick={() => {
+          loadSampleData();
+        }}
+      >
+        Or Load Some Sample Data
+      </button>
     <img
       alt="no orders available"
       className="empty-order-list__img"
