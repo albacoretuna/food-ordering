@@ -70,15 +70,6 @@ app.post('/api/survey-data/add', async (req, res) => {
   }
 });
 
-app.get('/api/survey-data/all', async (req, res) => {
-  try {
-    const { rows } = await query('SELECT * FROM orders ORDER BY id DESC');
-    res.send(rows);
-  } catch (e) {
-    res.status(500).send(e);
-  }
-});
-
 app.get('/api/survey-data/latest', async (req, res) => {
   try {
     const { rows } = await query(
@@ -90,17 +81,6 @@ app.get('/api/survey-data/latest', async (req, res) => {
   }
 });
 
-app.get('/api/survey-data/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    const { rows } = await query('SELECT * FROM orders WHERE id = $1 LIMIT 1', [
-      id,
-    ]);
-    res.send(rows[0]);
-  } catch (e) {
-    res.status(500).send(e);
-  }
-});
 
 app.use(express.static(path.resolve(__dirname, 'build')));
 
