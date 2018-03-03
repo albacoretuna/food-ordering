@@ -265,7 +265,8 @@ class App extends Component {
               <h1>Admin view</h1>
               <p>
                 Be careful, don't mess up with 200 hungry people's food orders
-                :D{' '}
+                :D <br /> {' '}
+                Your Username will be saved automatically.
               </p>
             </div>}
           {error && <ErrorContainer error={error} />}
