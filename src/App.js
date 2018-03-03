@@ -244,6 +244,15 @@ class App extends Component {
 
   // let rendering begin!
   render() {
+    const {
+      adminView,
+      loading,
+      surveyData,
+      error,
+      createdBy,
+      showGame,
+      searchTerm,
+    } = this.state;
     return (
       <div className="App">
         <Wrapper>
@@ -251,7 +260,7 @@ class App extends Component {
             <AdminSwitch handleChange={this.handleAdminSwitchChange} />
           </Header>
           <Notifications />
-          {this.state.adminView &&
+          {adminView &&
             <div className="admin-view">
               <h1>Admin view</h1>
               <p>
@@ -259,49 +268,50 @@ class App extends Component {
                 :D{' '}
               </p>
             </div>}
-          {this.state.error && <ErrorContainer error={this.state.error} />}
+          {error && <ErrorContainer error={error} />}
 
-          {this.state.loading &&
+          {loading &&
             <div className="loading-holder">
               <div className="loading" />
               <p className="loading-holder__p">Loading...</p>
             </div>}
 
-          {this.state.surveyData &&
-            this.state.adminView &&
-            !isEmpty(this.state.surveyData) &&
+          {surveyData &&
+            adminView &&
+            !isEmpty(surveyData) &&
             <LatestOrderNotice
-              surveyData={this.state.surveyData}
+              surveyData={surveyData}
               quantity={path(['surveyData', 'length'], this.state)}
               clear={this.clearSurveyData}
-              createdBy={this.state.createdBy}
+              createdBy={createdBy}
             />}
-          {(!this.state.surveyData || isEmpty(this.state.surveyData)) &&
-            this.state.adminView &&
-            !this.state.loading &&
+          {(!surveyData || isEmpty(surveyData)) &&
+            adminView &&
+            !loading &&
             <FileUploader onDrop={this.onDrop} />}
 
-          {this.state.surveyData &&
-            this.state.adminView &&
+          {surveyData &&
+            adminView &&
             <Fragment>
-              <Mailer surveyData={this.state.surveyData} />
-              <RestaurantOrders surveyData={this.state.surveyData} />
+              <Mailer surveyData={surveyData} />
+              <RestaurantOrders surveyData={surveyData} />
             </Fragment>}
 
-          {this.state.surveyData &&
-            !isEmpty(this.state.surveyData) &&
-            !this.state.adminView &&
+          {surveyData &&
+            !isEmpty(surveyData) &&
+            !adminView &&
             <WhoOrderedWhat
-              surveyData={this.state.surveyData}
-              searchTerm={this.state.searchTerm}
+              surveyData={surveyData}
+              searchTerm={searchTerm}
               handleSearchTermChange={this.handleSearchTermChange}
             />}
 
-          {this.state.surveyData &&
-            isEmpty(this.state.surveyData) &&
-            !this.state.adminView &&
+          {surveyData &&
+            !loading &&
+            isEmpty(surveyData) &&
+            !adminView &&
             <OrderListEmpty
-              showGame={this.state.showGame}
+              showGame={showGame}
               activateGame={this.activateGame}
               exitGame={this.exitGame}
               loadSampleData={this.loadSampleData}

@@ -300,7 +300,7 @@ export const ErrorContainer = ({ error }) => {
         <p className="error-container__p">
           Can't connect to the database, however you still can upload your CSV
           file and prepare the orders for restaurants! <br /> The data won't get
-          saved
+          saved though!
         </p>
       </div>
     );
@@ -381,8 +381,9 @@ export const Wrapper = ({ children }) =>
 
 export const OrderListEmpty = ({ showGame, activateGame, exitGame, loadSampleData }) =>
   <div className="empty-order-list">
-    <p className="empty-order-list__p">No orders here yet. Check back later. </p>
-    <a href="https://duckduckgo.com/?q=wwf+red+pandas" >Or learn about Red Pandas</a>
+    <p className="empty-order-list__p">No orders here yet. Check back later or... </p>
+    <div>
+    <a href="https://duckduckgo.com/?q=wwf+red+pandas" >Learn about Red Pandas</a>
     {!showGame &&
       <button
         className="empty-order-list__button"
@@ -390,7 +391,7 @@ export const OrderListEmpty = ({ showGame, activateGame, exitGame, loadSampleDat
           activateGame();
         }}
       >
-        Or Play a game
+        Play a game
       </button>}
       <button
         className="empty-order-list__button"
@@ -398,8 +399,9 @@ export const OrderListEmpty = ({ showGame, activateGame, exitGame, loadSampleDat
           loadSampleData();
         }}
       >
-        Or Load Some Sample Data
+        Load Some Sample Data
       </button>
+    </div>
     <img
       alt="no orders available"
       className="empty-order-list__img"
