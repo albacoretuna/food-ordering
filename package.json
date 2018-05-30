@@ -12,7 +12,7 @@
     "escape-string-regexp": "1.0.5",
     "express": "4.16.2",
     "express-promise-router": "3.0.1",
-    "joi": "13.1.2",
+    "joi": "13.3.0",
     "joi-browser": "13.0.1",
     "papaparse": "4.3.6",
     "pg": "7.4.1",
@@ -21,7 +21,7 @@
     "react-dom": "^16.2.0",
     "react-dropzone": "4.2.7",
     "react-notify-toast": "0.4.0",
-    "react-scripts": "1.1.0"
+    "react-scripts": "1.1.4"
   },
   "scripts": {
     "start": "concurrently \"nodemon server.js\" \"react-scripts start\"",
@@ -32,7 +32,7 @@
   "devDependencies": {
     "concurrently": "3.5.1",
     "dotenv": "5.0.0",
-    "nodemon": "1.14.12"
+    "nodemon": "1.17.5"
   },
   "license": "MIT",
   "repository": {
